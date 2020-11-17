@@ -1,7 +1,7 @@
 # Проект «Киноман» [![Build status][travis-image]][travis-url]
 
-- Студент: [Владислав Несвит](https://up.htmlacademy.ru/ecmascript/13/user/1486707).
-- Наставник: [Алексей Корякин](https://htmlacademy.ru/profile/alexeycorr).
+* Студент: [Владислав Несвит](https://up.htmlacademy.ru/ecmascript/13/user/1486707).
+* Наставник: `Неизвестно`.
 
 ---
 
