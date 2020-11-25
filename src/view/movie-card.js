@@ -1,15 +1,3 @@
-const createFilmsTemplate = () => {
-  return `<section class="films">
-  <section class="films-list">
-    <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
-
-    <div class="films-list__container">
-
-    </div>
-    <button class="films-list__show-more">Show more</button>
-  </section>`;
-};
-
 const createFilmArticle = () => {
   return `<article class="film-card">
         <h3 class="film-card__title">Popeye the Sailor Meets Sindbad the Sailor</h3>
@@ -31,6 +19,5 @@ const createFilmArticle = () => {
 };
 
 export {
-  createFilmsTemplate,
   createFilmArticle
 };

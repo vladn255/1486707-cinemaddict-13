@@ -1,4 +1,4 @@
-const createMenuTemplate = () => {
+const createNavMenuTemplate = () => {
   return `<nav class="main-navigation">
   <div class="main-navigation__items">
     <a href="#all" class="main-navigation__item">All movies</a>
@@ -8,24 +8,18 @@ const createMenuTemplate = () => {
   </div>
   <a href="#stats" class="main-navigation__additional">Stats</a>
 </nav>
+`;
+};
 
-<ul class="sort">
+const createSortMenuTemplate = () => {
+  return `<ul class="sort">
   <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
   <li><a href="#" class="sort__button">Sort by date</a></li>
   <li><a href="#" class="sort__button">Sort by rating</a></li>
 </ul>`;
 };
 
-const createFilmsStatistics = () => {
-  return `<p>130 291 movies inside</p>`;
-};
-
-const createShowMoreButton = () => {
-  return `<button class="films-list__show-more">Show more</button>`;
-};
-
 export {
-  createMenuTemplate,
-  createFilmsStatistics,
-  createShowMoreButton
+  createNavMenuTemplate,
+  createSortMenuTemplate
 };
