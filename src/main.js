@@ -1,14 +1,20 @@
 import {createProfileTemplate} from "./view/user-rank.js";
-import {createNavMenuTemplate, createSortMenuTemplate} from "./view/menu.js";
+import {createNavMenuTemplate} from "./view/nav-menu.js";
+import {createSortMenuTemplate} from "./view/sort-menu.js";
 import {createShowMoreButton} from "./view/show-more.js";
 import {createFilmArticle} from "./view/movie-card.js";
-import {createFilmsSectionTemplate, createFilmsListTemplate} from "./view/films-list";
-import {createPopUpTemplate} from "./view/popup.js";
-import {createUserStatsTemplate, createFilmsStatistics} from "./view/stats.js";
+import {createFilmsListTemplate} from "./view/films-list";
+import {createFilmsSectionTemplate} from "./view/films-wrapper.js";
+// import {createPopUpTemplate} from "./view/popup.js";
+// import {createUserStatsTemplate} from "./view/stats.js";
+import {createFilmsStatistics} from "./view/footer-stats.js";
 
 const CARDS_MAIN_QUANTITY = 5;
 const CARDS_EXTRA_QUANTITY = 2;
-const RenderPosition = {BEFORE_END: `beforeend`, AFTER_END: `afterend`};
+const RenderPosition = {
+  BEFORE_END: `beforeend`,
+  AFTER_END: `afterend`
+};
 const siteHeaderElement = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);
 const siteFooterElement = document.querySelector(`.footer`);
@@ -19,10 +25,11 @@ const render = (container, template, place) => {
 
 // рендер header'a (меню навигации)
 render(siteHeaderElement, createProfileTemplate(), RenderPosition.BEFORE_END);
+
+// рендер меню навигации
 render(siteMainElement, createNavMenuTemplate(), RenderPosition.BEFORE_END);
 
-// рендер header'a (меню фильтров)
-render(siteHeaderElement, createProfileTemplate(), RenderPosition.BEFORE_END);
+// рендер меню фильтров
 render(siteMainElement, createSortMenuTemplate(), RenderPosition.BEFORE_END);
 
 // рендер контейнера для списков фильмов
@@ -57,12 +64,12 @@ for (let i = 0; i < CARDS_EXTRA_QUANTITY; i++) {
 const filmsListElement = filmsElement.querySelector(`.films-list`);
 render(filmsListElement, createShowMoreButton(), RenderPosition.BEFORE_END);
 
-// рендер статистики пользователя в main
-render(siteMainElement, createUserStatsTemplate(), RenderPosition.BEFORE_END);
+// // рендер статистики пользователя в main
+// render(siteMainElement, createUserStatsTemplate(), RenderPosition.BEFORE_END);
 
 // рендер блока статистики в  footer'е
 const footerStatisticsElement = siteFooterElement.querySelector(`.footer__statistics`);
 render(footerStatisticsElement, createFilmsStatistics(), RenderPosition.BEFORE_END);
 
-// рендер попапа с подробной информацией о фильме
-render(siteFooterElement, createPopUpTemplate(), RenderPosition.AFTER_END);
+// // рендер попапа с подробной информацией о фильме
+// render(siteFooterElement, createPopUpTemplate(), RenderPosition.AFTER_END);
