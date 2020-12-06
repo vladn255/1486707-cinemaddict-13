@@ -1,7 +1,6 @@
 import {getRandomInteger, turnMinutesToHours} from "../utils.js";
-import dayjs from "dayjs";
 
-const CONSTANTS = {
+const FilmData = {
   RANDOM_SENTENCES: [
     `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
     `Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.`,
@@ -54,12 +53,12 @@ const CONSTANTS = {
 
 // генерация адреса обложки фильма
 const generateCoverImage = () => {
-  return CONSTANTS.POSTERS[getRandomInteger(0, CONSTANTS.POSTERS.length - 1)];
+  return FilmData.POSTERS[getRandomInteger(0, FilmData.POSTERS.length - 1)];
 };
 
 // генерация названия фильма
 const generateTitle = () => {
-  return CONSTANTS.TITLES[getRandomInteger(0, CONSTANTS.TITLES.length - 1)];
+  return FilmData.TITLES[getRandomInteger(0, FilmData.TITLES.length - 1)];
 };
 
 // генерация рейтинга
@@ -68,34 +67,25 @@ const generateRate = () => {
 };
 
 // генерация полного описания фильма
-const generateFullDescription = () => {
+const generateDescription = () => {
   const SENTENCES_COUNT_MAX = 5;
   const sentencesCount = getRandomInteger(1, SENTENCES_COUNT_MAX);
   const randomDesc = [];
 
   for (let i = 0; i < sentencesCount; i++) {
-    randomDesc.push(CONSTANTS.RANDOM_SENTENCES[getRandomInteger(0, CONSTANTS.RANDOM_SENTENCES.length - 1)]);
+    randomDesc.push(FilmData.RANDOM_SENTENCES[getRandomInteger(0, FilmData.RANDOM_SENTENCES.length - 1)]);
   }
 
   return randomDesc.join(` `);
 };
 
-// генерация сокращенного описания фильма
-const generateShortDescription = (text) => {
-  const MAX_TEXT_LENGTH = 140;
-  if (text.length >= MAX_TEXT_LENGTH) {
-    return (`${text.slice(MAX_TEXT_LENGTH - 2)}...`);
-  }
-  return text;
-};
-
 // генерация списка жанров
 const generateGenres = () => {
-  const maxCount = getRandomInteger(1, CONSTANTS.GENRES.length - 1);
+  const maxCount = getRandomInteger(1, FilmData.GENRES.length - 1);
 
   const genresList = [];
   for (let i = 0; i < maxCount; i++) {
-    genresList.push(CONSTANTS.GENRES[getRandomInteger(0, CONSTANTS.GENRES.length - 1)]);
+    genresList.push(FilmData.GENRES[getRandomInteger(0, FilmData.GENRES.length - 1)]);
   }
 
   return genresList;
@@ -103,7 +93,7 @@ const generateGenres = () => {
 
 // генерация даты релиза
 const generateReleaseDate = () => {
-  return dayjs(getRandomInteger(1930, 2020)).format(`YYYY`);
+  return new Date(getRandomInteger(1930, 2020), getRandomInteger(1, 12), getRandomInteger(1, 31));
 };
 
 // генерация длительности
@@ -113,27 +103,27 @@ const generateDuration = () => {
 
 // генерация имени директора
 const generateDirector = () => {
-  return CONSTANTS.DIRECTORS[getRandomInteger(0, CONSTANTS.DIRECTORS.length - 1)];
+  return FilmData.DIRECTORS[getRandomInteger(0, FilmData.DIRECTORS.length - 1)];
 };
 
 // генерация списка сценаристов
 const generateScreenwriters = () => {
-  return CONSTANTS.SCREENWRITERS.join(`, `);
+  return FilmData.SCREENWRITERS.join(`, `);
 };
 
 // генерация списка актеров
 const generateCast = () => {
-  return CONSTANTS.CAST.join(`, `);
+  return FilmData.CAST.join(`, `);
 };
 
 // генерация возрастного ограничения
 const generateAgeRestriction = () => {
-  return CONSTANTS.MPAA_RATING[getRandomInteger(0, CONSTANTS.MPAA_RATING.length - 1)];
+  return FilmData.MPAA_RATING[getRandomInteger(0, FilmData.MPAA_RATING.length - 1)];
 };
 
 // генерация страны
 const generateCountry = () => {
-  return CONSTANTS.COUNTRIES[getRandomInteger(0, CONSTANTS.COUNTRIES.length - 1)];
+  return FilmData.COUNTRIES[getRandomInteger(0, FilmData.COUNTRIES.length - 1)];
 };
 
 const generateFilmCard = () => {
@@ -147,8 +137,7 @@ const generateFilmCard = () => {
     releaseDate: generateReleaseDate(),
     duration: generateDuration(),
     genres: generateGenres(),
-    fullDescription: generateFullDescription(),
-    shortDescription: generateShortDescription(generateFullDescription()),
+    description: generateDescription(),
     commentsCount: getRandomInteger(0, COMMENT_COUNT_MAX),
     originalTitle: generateTitle(),
     director: generateDirector(),

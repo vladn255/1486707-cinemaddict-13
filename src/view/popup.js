@@ -1,15 +1,54 @@
-const createPopUpTemplate = (filmCard) => {
-  const {cover, title, rate, releaseDate, duration, genres, fullDescription, originalTitle, director, screenwriters, cast, country, ageRestriction} = filmCard;
+import {getFullDate} from "../utils.js";
 
-  const createGenreTemplate = (list) => {
-    let genresTemplate = ``;
-    for (let item of list) {
-      genresTemplate += (
-        `<span class="film-details__genre">${item}</span>`
-      );
-    }
-    return genresTemplate;
-  };
+const FilmDetails = {
+  director: `Director`,
+  screenwriters: `Writers`,
+  cast: `Actors`,
+  releaseDate: `Release Date`,
+  duration: `Runtime`,
+  country: `Country`
+};
+
+// создание шаблона сведения о фильме
+const createFilmDetailItemTemplate = (detail, detailName) => {
+
+  return (
+    `<tr class="film-details__row">
+      <td class="film-details__term">${FilmDetails[detailName]}</td>
+      <td class="film-details__cell">${detail}</td>
+    </tr>`);
+};
+
+// создание шаблона жанров
+const createGenreTemplate = (list) => {
+
+  return list.map((item) => {
+    return (
+      `<span class="film-details__genre">${item}</span>`);
+  }).join(``);
+};
+
+// создание шаблона таблицы информации о фильме
+const createFilmDetailsTemplate = (filmCard) => {
+  const {releaseDate, duration, genres, director, screenwriters, cast, country} = filmCard;
+
+  return (
+    `${createFilmDetailItemTemplate(director, `director`)}
+      ${createFilmDetailItemTemplate(screenwriters, `screenwriters`)}
+      ${createFilmDetailItemTemplate(cast, `cast`)}
+      ${createFilmDetailItemTemplate(getFullDate(releaseDate), `releaseDate`)}
+      ${createFilmDetailItemTemplate(duration, `duration`)}
+      ${createFilmDetailItemTemplate(country, `country`)}
+      <tr class="film-details__row">
+        <td class="film-details__term">Genres</td>
+        <td class="film-details__cell">
+        ${createGenreTemplate(genres)}</td>`
+  );
+};
+
+const createPopUpTemplate = (filmCard) => {
+
+  const {cover, title, rate, fullDescription, originalTitle, ageRestriction} = filmCard;
 
   return (
     `<section class="film-details">
@@ -38,39 +77,12 @@ const createPopUpTemplate = (filmCard) => {
               </div>
 
               <table class="film-details__table">
-                <tr class="film-details__row">
-                  <td class="film-details__term">Director</td>
-                  <td class="film-details__cell">${director}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Writers</td>
-                  <td class="film-details__cell">${screenwriters}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Actors</td>
-                  <td class="film-details__cell">${cast}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${releaseDate}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${duration}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Country</td>
-                  <td class="film-details__cell">${country}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Genres</td>
-                  <td class="film-details__cell">
-                  ${createGenreTemplate(genres)}</td>
+                ${createFilmDetailsTemplate(filmCard)}
                 </tr>
               </table>
 
               <p class="film-details__film-description">
-                ${fullDescription}
+                    ${fullDescription}
               </p>
             </div>
           </div>

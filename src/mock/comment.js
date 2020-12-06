@@ -1,7 +1,7 @@
 import {getRandomInteger} from "../utils.js";
 import dayjs from "dayjs";
 
-const CONSTANTS = {
+const CommentData = {
   RANDOM_SENTENCES: [
     `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
     `Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.`,
@@ -30,17 +30,17 @@ const CONSTANTS = {
 
 // генерация адреса эмодзи
 const generateEmoji = () => {
-  return CONSTANTS.EMOJIS[getRandomInteger(0, CONSTANTS.EMOJIS.length - 1)];
+  return CommentData.EMOJIS[getRandomInteger(0, CommentData.EMOJIS.length - 1)];
 };
 
 // генерация текста комментария
 const generateText = () => {
-  return CONSTANTS.RANDOM_SENTENCES[getRandomInteger(0, CONSTANTS.RANDOM_SENTENCES.length - 1)];
+  return CommentData.RANDOM_SENTENCES[getRandomInteger(0, CommentData.RANDOM_SENTENCES.length - 1)];
 };
 
 // генерация автора комментария
 const generateName = () => {
-  return CONSTANTS.RANDOM_NAMES[getRandomInteger(0, CONSTANTS.RANDOM_NAMES.length - 1)];
+  return CommentData.RANDOM_NAMES[getRandomInteger(0, CommentData.RANDOM_NAMES.length - 1)];
 };
 
 // генерация даты комментария

@@ -1,6 +1,6 @@
 
 const filmsToFilterMap = {
-  allMovies: (films) => {
+  all: (films) => {
     return films.length;
   },
   watchlist: (films) => {
@@ -8,7 +8,7 @@ const filmsToFilterMap = {
       return film.isToWatch;
     }).length;
   },
-  alreadyWatched: (films) => {
+  history: (films) => {
     return films.filter((film) => {
       return film.isAlreadyWatched;
     }).length;

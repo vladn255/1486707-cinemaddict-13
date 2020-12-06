@@ -1,19 +1,21 @@
+import {getShortText, getYearDate} from "../utils.js";
 
 const createFilmArticle = (filmCard) => {
-  const {cover, title, rate, releaseDate, duration, genres: genresList, shortDescription, commentsCount} = filmCard;
+  let {cover, title, rate, releaseDate, duration, genres, description, commentsCount} = filmCard;
 
-  const genres = genresList.join(`, `);
+  const shortDescription = getShortText(description);
+  genres = genres.join(`, `);
 
   return (
     `<article class="film-card">
         <h3 class="film-card__title">${title}</h3>
         <p class="film-card__rating">${rate}</p>
         <p class="film-card__info">
-          <span class="film-card__year">${releaseDate}</span>
+          <span class="film-card__year">${getYearDate(releaseDate)}</span>
           <span class="film-card__duration">${duration}</span>
           <span class="film-card__genre">${genres}</span>
         </p>
-        <img src="${cover}" alt="" class="film-card__poster">
+        <img src="${cover}" alt="${title}" class="film-card__poster">
         <p class="film-card__description">${shortDescription}</p>
         <a class="film-card__comments">${commentsCount} comments</a>
         <div class="film-card__controls">
