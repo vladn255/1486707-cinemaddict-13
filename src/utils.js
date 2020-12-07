@@ -20,14 +20,20 @@ const turnMinutesToHours = (number) => {
 };
 
 // формирование даты в формате (год)
-const getYearDate = (date) => {
+const getYDate = (date) => {
   return dayjs(date).format(`YYYY`);
 };
 
 // формирование даты в формате (день месяц год)
-const getFullDate = (date) => {
+const getDMYDate = (date) => {
   return dayjs(date).format(`DD MMMM YYYY`);
 };
+
+// формирование даты в формате (год / месяц / день часы : минуты)
+const getYMDHMDate = (date) => {
+  return dayjs(date).format(`YYYY/MM/DD HH:mm`);
+};
+
 
 // обрезание текстового фрагмента до 140 символов
 const getShortText = (text) => {
@@ -41,6 +47,7 @@ export {
   getRandomInteger,
   turnMinutesToHours,
   getShortText,
-  getYearDate,
-  getFullDate
+  getYDate,
+  getDMYDate,
+  getYMDHMDate
 };

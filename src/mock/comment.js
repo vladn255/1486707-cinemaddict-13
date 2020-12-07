@@ -45,9 +45,9 @@ const generateName = () => {
 
 // генерация даты комментария
 const generateDate = () => {
-  const postDate = dayjs(new Date(getRandomInteger(1930, 2020), getRandomInteger(1, 12), getRandomInteger(1, 31), getRandomInteger(0, 23), getRandomInteger(0, 59)));
+  const postDate = new Date(getRandomInteger(1930, 2020), getRandomInteger(1, 12), getRandomInteger(1, 31), getRandomInteger(0, 23), getRandomInteger(0, 59));
 
-  return dayjs(postDate).format(`YYYY/MM/DD HH:mm`);
+  return postDate;
 };
 
 // генерация случайного комментария

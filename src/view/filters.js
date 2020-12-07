@@ -9,11 +9,22 @@ const createFilterItemTemplate = (filter, isActive) => {
   const {name, count} = filter;
 
   return (
-    name === `all`
-      ? `<a href="#${name}" class="main-navigation__item
-    ${isActive ? `main-navigation__item--active` : ``}">${FilterNames[name]}</a>`
-      : `<a href="#${name}" class="main-navigation__item
-    ${isActive ? `main-navigation__item--active` : ``}">${FilterNames[name]} <span class="main-navigation__item-count">${count}</span></a>`);
+    `<a
+      href="#${name}"
+      class="main-navigation__item ${isActive
+      ? `main-navigation__item--active`
+      : ``}"
+    >
+      ${FilterNames[name]}
+
+      ${name !== `all`
+      ? `<span class="main-navigation__item-count">
+            ${count}
+          </span>`
+      : ``
+    }
+    </a>`
+  );
 };
 
 const createNavMenuTemplate = (filters) => {

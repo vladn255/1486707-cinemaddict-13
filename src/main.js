@@ -21,6 +21,23 @@ const CARDS_EXTRA_QUANTITY = 2;
 const FILMS_MOCK_COUNT = 17;
 const COMMENTS_QUANTITY = 3;
 
+const ListTypes = {
+  ALL_MOVIES: {
+    title: `All movies. Upcoming`,
+    isHidden: true,
+    isExtra: false
+  },
+  TOP_RATED: {
+    title: `Top rated`,
+    isHidden: false,
+    isExtra: true
+  },
+  MOST_COMMENTED: {
+    title: `Most commented`,
+    isHidden: false,
+    isExtra: true
+  }
+};
 const RenderPosition = {
   BEFORE_END: `beforeend`,
   AFTER_END: `afterend`
@@ -52,7 +69,7 @@ render(siteMainElement, createFilmsSectionTemplate(), RenderPosition.BEFORE_END)
 const filmsElement = siteMainElement.querySelector(`.films`);
 
 // рендер основого списка фильмов (CARDS_MAIN_QUANTITY штук)
-render(filmsElement, createFilmsListTemplate(`All movies. Upcoming`), RenderPosition.BEFORE_END);
+render(filmsElement, createFilmsListTemplate(ListTypes.ALL_MOVIES), RenderPosition.BEFORE_END);
 const filmsListSection = siteMainElement.querySelector(`.films-list`);
 const filmsListContainer = filmsListSection.querySelector(`.films-list__container`);
 for (let i = 0; i < Math.min(films.length, CARDS_MAIN_QUANTITY); i++) {
@@ -60,17 +77,15 @@ for (let i = 0; i < Math.min(films.length, CARDS_MAIN_QUANTITY); i++) {
 }
 
 // рендер списка фильмов с высоким рейтингом (CARDS_EXTRA_QUANTITY штук)
-render(filmsElement, createFilmsListTemplate(`Top rated`, `films-list--extra`), RenderPosition.BEFORE_END);
-const filmsExtraSection = siteMainElement.querySelector(`.films-list--extra`);
-const filmsExtraContainer = filmsExtraSection.querySelector(`.films-list__container`);
+render(filmsElement, createFilmsListTemplate(ListTypes.TOP_RATED), RenderPosition.BEFORE_END);
+const filmsTopRatedContainer = siteMainElement.querySelector(`.films-list:nth-child(2) .films-list__container`);
 for (let i = 0; i < CARDS_EXTRA_QUANTITY; i++) {
-  render(filmsExtraContainer, createFilmArticle(films[i]), RenderPosition.BEFORE_END);
+  render(filmsTopRatedContainer, createFilmArticle(films[i]), RenderPosition.BEFORE_END);
 }
 
 // рендер списка самых комментируемых фильмов (CARDS_EXTRA_QUANTITY штук)
-render(filmsElement, createFilmsListTemplate(`Most commented`, `films-list--extra`), RenderPosition.BEFORE_END);
-const filmsMostCommentedSection = siteMainElement.querySelectorAll(`.films-list--extra`)[1];
-const filmsMostCommentedContainer = filmsMostCommentedSection.querySelector(`.films-list__container`);
+render(filmsElement, createFilmsListTemplate(ListTypes.MOST_COMMENTED), RenderPosition.BEFORE_END);
+const filmsMostCommentedContainer = siteMainElement.querySelector(`.films-list:nth-child(3) .films-list__container`);
 for (let i = 0; i < CARDS_EXTRA_QUANTITY; i++) {
   render(filmsMostCommentedContainer, createFilmArticle(films[i]), RenderPosition.BEFORE_END);
 }

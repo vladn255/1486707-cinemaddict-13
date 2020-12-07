@@ -1,4 +1,4 @@
-import {getFullDate} from "../utils.js";
+import {getDMYDate} from "../utils.js";
 
 const FilmDetails = {
   director: `Director`,
@@ -6,7 +6,9 @@ const FilmDetails = {
   cast: `Actors`,
   releaseDate: `Release Date`,
   duration: `Runtime`,
-  country: `Country`
+  country: `Country`,
+  genres: `Genres`,
+  genre: `Genre`
 };
 
 // создание шаблона сведения о фильме
@@ -19,36 +21,15 @@ const createFilmDetailItemTemplate = (detail, detailName) => {
     </tr>`);
 };
 
-// создание шаблона жанров
-const createGenreTemplate = (list) => {
+// создание шаблона информации о фильме
+const createPopUpTemplate = (filmCard) => {
 
-  return list.map((item) => {
+  const {cover, title, rate, description, originalTitle, ageRestriction, releaseDate, duration, genres, director, screenwriters, cast, country} = filmCard;
+
+  const genresTemplate = genres.map((item) => {
     return (
       `<span class="film-details__genre">${item}</span>`);
   }).join(``);
-};
-
-// создание шаблона таблицы информации о фильме
-const createFilmDetailsTemplate = (filmCard) => {
-  const {releaseDate, duration, genres, director, screenwriters, cast, country} = filmCard;
-
-  return (
-    `${createFilmDetailItemTemplate(director, `director`)}
-      ${createFilmDetailItemTemplate(screenwriters, `screenwriters`)}
-      ${createFilmDetailItemTemplate(cast, `cast`)}
-      ${createFilmDetailItemTemplate(getFullDate(releaseDate), `releaseDate`)}
-      ${createFilmDetailItemTemplate(duration, `duration`)}
-      ${createFilmDetailItemTemplate(country, `country`)}
-      <tr class="film-details__row">
-        <td class="film-details__term">Genres</td>
-        <td class="film-details__cell">
-        ${createGenreTemplate(genres)}</td>`
-  );
-};
-
-const createPopUpTemplate = (filmCard) => {
-
-  const {cover, title, rate, fullDescription, originalTitle, ageRestriction} = filmCard;
 
   return (
     `<section class="film-details">
@@ -77,12 +58,21 @@ const createPopUpTemplate = (filmCard) => {
               </div>
 
               <table class="film-details__table">
-                ${createFilmDetailsTemplate(filmCard)}
+                ${createFilmDetailItemTemplate(director, `director`)}
+                ${createFilmDetailItemTemplate(screenwriters, `screenwriters`)}
+                ${createFilmDetailItemTemplate(cast, `cast`)}
+                ${createFilmDetailItemTemplate(getDMYDate(releaseDate), `releaseDate`)}
+                ${createFilmDetailItemTemplate(duration, `duration`)}
+                ${createFilmDetailItemTemplate(country, `country`)}
+                ${createFilmDetailItemTemplate(genresTemplate, `${
+      genres.length === 1
+        ? `genre`
+        : `genres`}`)}
                 </tr>
               </table>
 
               <p class="film-details__film-description">
-                    ${fullDescription}
+                    ${description}
               </p>
             </div>
           </div>
