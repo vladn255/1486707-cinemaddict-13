@@ -26,10 +26,7 @@ const createPopUpTemplate = (filmCard) => {
 
   const {cover, title, rate, description, originalTitle, ageRestriction, releaseDate, duration, genres, director, screenwriters, cast, country} = filmCard;
 
-  const genresTemplate = genres.map((item) => {
-    return (
-      `<span class="film-details__genre">${item}</span>`);
-  }).join(``);
+  const genresTemplate = genres.map((item) => `<span class="film-details__genre">${item}</span>`).join(``);
 
   return (
     `<section class="film-details">

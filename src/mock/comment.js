@@ -1,5 +1,4 @@
 import {getRandomInteger} from "../utils.js";
-import dayjs from "dayjs";
 
 const CommentData = {
   RANDOM_SENTENCES: [
