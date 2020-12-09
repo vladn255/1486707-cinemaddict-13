@@ -7,6 +7,4 @@ const createProfileTemplate = () => {
   );
 };
 
-export {
-  createProfileTemplate
-};
+export {createProfileTemplate};

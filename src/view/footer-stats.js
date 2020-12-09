@@ -1,5 +1,5 @@
-const createFilmsStatistics = () => {
-  return `<p>130 291 movies inside</p>`;
+const createFilmsStatistics = (number) => {
+  return `<p>${number} movies inside</p>`;
 };
 
 export {createFilmsStatistics};

@@ -1,4 +1,3 @@
-
 const createSortMenuTemplate = () => {
   return (
     `<ul class="sort">
