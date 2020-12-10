@@ -1,3 +1,5 @@
+import {createElement} from "../utils.js";
+
 const createSortMenuTemplate = () => {
   return (
     `<ul class="sort">
@@ -8,4 +10,21 @@ const createSortMenuTemplate = () => {
   );
 };
 
-export {createSortMenuTemplate};
+export default class SortMenu {
+  constructor() {
+    this._element = null;
+  }
+  getTemplate() {
+    return createSortMenuTemplate();
+  }
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

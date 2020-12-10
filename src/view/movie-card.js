@@ -1,32 +1,25 @@
-import {getShortText, getYDate} from "../utils.js";
-
-const ControlsList = {
-  WATCHLIST: {
-    name: `Add to watchlist`,
-    modifier: `add-to-watchlist`
-  },
-  HISTORY: {
-    name: `Mark as watched`,
-    modifier: `mark-as-watched`
-  },
-  FAVORITES: {
-    name: `Mark as favorite`,
-    modifier: `favorite`
-  }
-};
-
-const createControlButtonItem = (control, check) => {
-  const {modifier, name} = control;
-  return (
-    `<button class="film-card__controls-item button film-card__controls-item--${modifier}
-    ${check
-      ? ``
-      : ` film-card__controls-item--active`}"
-      type="button">${name}</button>`);
-};
+import {getShortText, getYDate, createElement} from "../utils.js";
 
 const createFilmArticle = (filmCard) => {
   let {cover, title, rate, releaseDate, duration, genres, description, commentsCount, isToWatch, isAlreadyWatched, isInFavorites} = filmCard;
+
+  const controls = [
+    {
+      name: `Add to watchlist`,
+      modifier: `add-to-watchlist`,
+      isActive: isToWatch
+    },
+    {
+      name: `Mark as watched`,
+      modifier: `mark-as-watched`,
+      isActive: isAlreadyWatched
+    },
+    {
+      name: `Mark as favorite`,
+      modifier: `favorite`,
+      isActive: isInFavorites
+    }
+  ];
 
   const shortDescription = getShortText(description);
   const genre = genres[0];
@@ -44,12 +37,35 @@ const createFilmArticle = (filmCard) => {
         <p class="film-card__description">${shortDescription}</p>
         <a class="film-card__comments">${commentsCount} comments</a>
         <div class="film-card__controls">
-         ${createControlButtonItem(ControlsList.WATCHLIST, isToWatch)}
-         ${createControlButtonItem(ControlsList.HISTORY, isAlreadyWatched)}
-         ${createControlButtonItem(ControlsList.FAVORITES, isInFavorites)}
+          ${controls.map((name, modifier, isActive) =>
+      `<button class="film-card__controls-item button film-card__controls-item--${modifier}
+      ${isActive
+      ? ` film-card__controls-item--active`
+      : ``}"
+         type="button">${name}</button>`
+    ).join(``)}
+
         </div>
      </article>`
   );
 };
 
-export {createFilmArticle};
+export default class MovieCard {
+  constructor(filmCard) {
+    this._element = null;
+    this._filmCard = filmCard;
+  }
+  getTemplate() {
+    return createFilmArticle(this._filmCard);
+  }
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

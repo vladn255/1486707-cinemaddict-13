@@ -1,4 +1,4 @@
-import {getDMYDate} from "../utils.js";
+import {getDMYDate, createElement} from "../utils.js";
 
 const FilmDetails = {
   director: `Director`,
@@ -130,6 +130,22 @@ const createPopUpTemplate = (filmCard) => {
   );
 };
 
-export {
-  createPopUpTemplate
-};
+export default class Popup {
+  constructor(filmCard) {
+    this._element = null;
+    this._filmCard = filmCard;
+  }
+  getTemplate() {
+    return createPopUpTemplate(this._filmCard);
+  }
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
