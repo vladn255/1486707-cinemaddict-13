@@ -1,3 +1,5 @@
+import {createElement} from "../utils.js";
+
 const FilterNames = {
   all: `All movies`,
   watchlist: `Watchlist`,
@@ -41,4 +43,24 @@ const createNavMenuTemplate = (filters) => {
 };
 
 
-export {createNavMenuTemplate};
+export default class Filters {
+  constructor(filters) {
+    this._element = null;
+    this._filters = filters;
+  }
+
+  getTemplate() {
+    return createNavMenuTemplate(this._filters);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

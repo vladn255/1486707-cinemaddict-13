@@ -1,4 +1,4 @@
-import {getYMDHMDate} from "../utils.js";
+import {getYMDHMDate, createElement} from "../utils.js";
 
 const createCommentTemplate = (comment) => {
   const {emoji, text, author, date} = comment;
@@ -20,4 +20,24 @@ const createCommentTemplate = (comment) => {
   );
 };
 
-export {createCommentTemplate};
+export default class Comment {
+  constructor(comment) {
+    this._element = null;
+    this._comment = comment;
+  }
+
+  getTemplate() {
+    return createCommentTemplate(this._comment);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

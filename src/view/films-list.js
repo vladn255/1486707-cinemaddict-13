@@ -1,3 +1,4 @@
+import {createElement} from "../utils.js";
 
 const createFilmsListTemplate = (listType) => {
   const {title, isHidden, isExtra} = listType;
@@ -20,4 +21,24 @@ const createFilmsListTemplate = (listType) => {
 };
 
 
-export {createFilmsListTemplate};
+export default class FilmsList {
+  constructor(listType) {
+    this._element = null;
+    this._listType = listType;
+  }
+
+  getTemplate() {
+    return createFilmsListTemplate(this._listType);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
