@@ -13,9 +13,11 @@ export default class UserRank {
   constructor() {
     this._element = null;
   }
+
   getTemplate() {
     return createProfileTemplate();
   }
+
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());

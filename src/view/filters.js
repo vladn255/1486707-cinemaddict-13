@@ -48,9 +48,11 @@ export default class Filters {
     this._element = null;
     this._filters = filters;
   }
+
   getTemplate() {
     return createNavMenuTemplate(this._filters);
   }
+
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());

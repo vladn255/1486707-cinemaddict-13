@@ -25,9 +25,11 @@ export default class Comment {
     this._element = null;
     this._comment = comment;
   }
+
   getTemplate() {
     return createCommentTemplate(this._comment);
   }
+
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());

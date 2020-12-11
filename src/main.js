@@ -48,7 +48,7 @@ const siteFooterElement = document.querySelector(`.footer`);
 
 // показ попапа
 const showPopup = (film, count) => {
-  document.querySelector(`body`).classList.add(`.hide-overflow`);
+  document.querySelector(`body`).classList.add(`hide-overflow`);
 
   const newPopupItem = new Popup(film).getElement();
   siteFooterElement.appendChild(newPopupItem);
@@ -68,7 +68,7 @@ const showPopup = (film, count) => {
 
 // скрытие попапа
 const closePopup = (item) => {
-  document.querySelector(`body`).classList.remove(`.hide-overflow`);
+  document.querySelector(`body`).classList.remove(`hide-overflow`);
 
   siteFooterElement.removeChild(item);
 };
@@ -148,11 +148,5 @@ if (films.length > CARDS_MAIN_QUANTITY) {
 
 // рендер блока статистики в  footer'е
 const footerStatisticsElement = siteFooterElement.querySelector(`.footer__statistics`);
-render(footerStatisticsElement, new FooterStats(getRandomInteger(1, 100000)).getElement, RenderPosition.BEFORE_END);
+render(footerStatisticsElement, new FooterStats(getRandomInteger(1, 100000)).getElement(), RenderPosition.BEFORE_END);
 
-// // рендер попапа с подробной информацией о фильме c комментариями (COMMENTS_QUANTITY штук)
-// render(siteFooterElement, new Popup(films[0]).getElement(), RenderPosition.BEFORE_END);
-// const commentsListContainer = document.querySelector(`.film-details__comments-list`);
-// for (let i = 0; i < COMMENTS_QUANTITY; i++) {
-//   render(commentsListContainer, new Comment(generateComment()).getElement(), RenderPosition.BEFORE_END);
-// }

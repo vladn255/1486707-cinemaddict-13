@@ -135,9 +135,11 @@ export default class Popup {
     this._element = null;
     this._filmCard = filmCard;
   }
+
   getTemplate() {
     return createPopUpTemplate(this._filmCard);
   }
+
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());

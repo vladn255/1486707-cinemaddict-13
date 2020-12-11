@@ -9,9 +9,11 @@ export default class FooterStats {
     this._element = null;
     this._number = number;
   }
+
   getTemplate() {
     return createFilmsStatistics(this._number);
   }
+
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());

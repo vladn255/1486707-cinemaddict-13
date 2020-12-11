@@ -12,9 +12,11 @@ export default class FilmsWrapper {
   constructor() {
     this._element = null;
   }
+
   getTemplate() {
     return createFilmsSectionTemplate();
   }
+
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());

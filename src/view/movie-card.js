@@ -37,13 +37,16 @@ const createFilmArticle = (filmCard) => {
         <p class="film-card__description">${shortDescription}</p>
         <a class="film-card__comments">${commentsCount} comments</a>
         <div class="film-card__controls">
-          ${controls.map((name, modifier, isActive) =>
-      `<button class="film-card__controls-item button film-card__controls-item--${modifier}
-      ${isActive
-      ? ` film-card__controls-item--active`
-      : ``}"
+           ${controls.map((control) => {
+      const {name, modifier, isActive} = control;
+      return (
+        `<button class="film-card__controls-item button film-card__controls-item--${modifier}
+        ${isActive
+          ? ` film-card__controls-item--active`
+          : ``}"
          type="button">${name}</button>`
-    ).join(``)}
+      );
+    }).join(``)}
 
         </div>
      </article>`
@@ -55,9 +58,11 @@ export default class MovieCard {
     this._element = null;
     this._filmCard = filmCard;
   }
+
   getTemplate() {
     return createFilmArticle(this._filmCard);
   }
+
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());

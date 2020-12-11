@@ -26,9 +26,11 @@ export default class FilmsList {
     this._element = null;
     this._listType = listType;
   }
+
   getTemplate() {
     return createFilmsListTemplate(this._listType);
   }
+
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
