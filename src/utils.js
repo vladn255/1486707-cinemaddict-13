@@ -6,8 +6,8 @@ const RenderPosition = {
 };
 
 const KeyBindings = {
-  KEY_ESCAPE: `Escape`,
-  KEY_ENTER: `Enter`
+  ESCAPE: `Escape`,
+  ENTER: `Enter`
 };
 
 // рандомизатор

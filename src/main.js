@@ -52,9 +52,9 @@ const siteFooterElement = document.querySelector(`.footer`);
 const showPopup = (film, count) => {
   document.querySelector(`body`).classList.add(`hide-overflow`);
 
-  const newPopupItem = new Popup(film).getElement();
-  siteFooterElement.appendChild(newPopupItem);
-  const commentsListContainer = newPopupItem.querySelector(`.film-details__comments-list`);
+  const newPopupItem = new Popup(film);
+  siteFooterElement.appendChild(newPopupItem.getElement());
+  const commentsListContainer = newPopupItem.getElement().querySelector(`.film-details__comments-list`);
 
   for (let j = 0; j < count; j++) {
     render(commentsListContainer, new Comment(generateComment()).getElement(), RenderPosition.BEFORE_END);
@@ -62,20 +62,19 @@ const showPopup = (film, count) => {
 
   // обработчик клика на иконку "закрыть" в попапе
   const onClosePopupClick = () => {
-    return closePopup(newPopupItem);
+    closePopup(newPopupItem.getElement());
   };
 
   // обработчик нажатия на Esc в попапе
   const onClosePopupEscDown = (evt) => {
-    evt.preventDefault();
-    if (evt.key === KeyBindings.KEY_ESCAPE) {
-      closePopup(newPopupItem);
+    if (evt.key === KeyBindings.ESCAPE) {
+      evt.preventDefault();
       document.removeEventListener(`keydown`, onClosePopupEscDown);
+      closePopup(newPopupItem.getElement());
     }
-    return ``;
   };
 
-  newPopupItem.querySelector(`.film-details__close-btn`).addEventListener(`click`, onClosePopupClick);
+  newPopupItem.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, onClosePopupClick);
   document.addEventListener(`keydown`, onClosePopupEscDown);
 };
 
@@ -93,7 +92,7 @@ const renderMovieCards = (container, filmsList, cardsCount, commentsCount) => {
 
     // обработчик клика на карточку фильма
     const onFilmCardClick = () => {
-      return showPopup(filmsList[i], commentsCount);
+      showPopup(filmsList[i], commentsCount);
     };
 
     newMovieItem.querySelector(`.film-card__title`).addEventListener(`click`, onFilmCardClick);
@@ -139,8 +138,9 @@ if (films.length > CARDS_MAIN_QUANTITY & filmsNumber !== 0) {
   let renderedFilmsCount = CARDS_MAIN_QUANTITY;
 
   const filmsListElement = filmsElement.querySelector(`.films-list`);
-  render(filmsListElement, new ShowMoreButton().getElement(), RenderPosition.BEFORE_END);
-  const showMoreButton = filmsElement.querySelector(`.films-list__show-more`);
+  const showMoreButtonItem = new ShowMoreButton();
+  render(filmsListElement, showMoreButtonItem.getElement(), RenderPosition.BEFORE_END);
+  // const showMoreButton = filmsElement.querySelector(`.films-list__show-more`);
 
   // обработчик события нажатия на кнопку show more
   const onShowMoreButtonClick = (evt) => {
@@ -154,11 +154,11 @@ if (films.length > CARDS_MAIN_QUANTITY & filmsNumber !== 0) {
     renderedFilmsCount += CARDS_MAIN_QUANTITY;
 
     if (renderedFilmsCount >= films.length) {
-      showMoreButton.remove();
+      showMoreButtonItem.getElement().remove();
     }
   };
 
-  showMoreButton.addEventListener(`click`, onShowMoreButtonClick);
+  showMoreButtonItem.getElement().addEventListener(`click`, onShowMoreButtonClick);
 }
 
 
