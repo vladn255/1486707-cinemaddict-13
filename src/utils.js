@@ -5,6 +5,11 @@ const RenderPosition = {
   AFTER_BEGIN: `afterbegin`
 };
 
+const KeyBindings = {
+  KEY_ESCAPE: `Escape`,
+  KEY_ENTER: `Enter`
+};
+
 // рандомизатор
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -74,6 +79,7 @@ const createElement = (template) => {
 
 export {
   RenderPosition,
+  KeyBindings,
   getRandomInteger,
   turnMinutesToHours,
   getShortText,

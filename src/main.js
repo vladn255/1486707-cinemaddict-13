@@ -1,4 +1,4 @@
-import {getRandomInteger, RenderPosition, render} from "./utils.js";
+import {getRandomInteger, RenderPosition, render, KeyBindings} from "./utils.js";
 
 import UserRank from "./view/user-rank.js";
 import Filters from "./view/filters.js";
@@ -11,6 +11,7 @@ import FooterStats from "./view/footer-stats.js";
 import Popup from "./view/popup.js";
 // import Stats from "./view/stats.js";
 import Comment from "./view/comments.js";
+import EmptyList from "./view/empty-list.js";
 
 import {generateFilmCard} from "./mock/film-data.js";
 import {generateComment} from "./mock/comment.js";
@@ -41,6 +42,7 @@ const ListTypes = {
 
 const films = new Array(FILMS_MOCK_COUNT).fill().map(generateFilmCard);
 const filters = generateFilters(films);
+const filmsNumber = getRandomInteger(0, 100000);
 
 const siteHeaderElement = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);
@@ -63,13 +65,23 @@ const showPopup = (film, count) => {
     return closePopup(newPopupItem);
   };
 
+  // обработчик нажатия на Esc в попапе
+  const onClosePopupEscDown = (evt) => {
+    evt.preventDefault();
+    if (evt.key === KeyBindings.KEY_ESCAPE) {
+      closePopup(newPopupItem);
+      document.removeEventListener(`keydown`, onClosePopupEscDown);
+    }
+    return ``;
+  };
+
   newPopupItem.querySelector(`.film-details__close-btn`).addEventListener(`click`, onClosePopupClick);
+  document.addEventListener(`keydown`, onClosePopupEscDown);
 };
 
 // скрытие попапа
 const closePopup = (item) => {
   document.querySelector(`body`).classList.remove(`hide-overflow`);
-
   siteFooterElement.removeChild(item);
 };
 
@@ -105,25 +117,32 @@ render(siteHeaderElement, new UserRank().getElement(), RenderPosition.BEFORE_END
 render(siteMainElement, new Filters(filters).getElement(), RenderPosition.BEFORE_END);
 
 // рендер меню фильтров
-render(siteMainElement, new SortMenu().getElement(), RenderPosition.BEFORE_END);
+if (filmsNumber !== 0) {
+  render(siteMainElement, new SortMenu().getElement(), RenderPosition.BEFORE_END);
+}
 
 // рендер контейнера для списков фильмов
 render(siteMainElement, new FilmsWrapper().getElement(), RenderPosition.BEFORE_END);
 const filmsElement = siteMainElement.querySelector(`.films`);
 
 // отрисовка списков фильмов
-renderFilmsList(ListTypes.ALL_MOVIES, films, CARDS_MAIN_QUANTITY, 1);
-renderFilmsList(ListTypes.TOP_RATED, films, CARDS_EXTRA_QUANTITY, 2);
-renderFilmsList(ListTypes.MOST_COMMENTED, films, CARDS_EXTRA_QUANTITY, 3);
+if (filmsNumber === 0) {
+  render(filmsElement, new EmptyList().getElement(), RenderPosition.BEFORE_END);
+} else {
+  renderFilmsList(ListTypes.ALL_MOVIES, films, CARDS_MAIN_QUANTITY, 1);
+  renderFilmsList(ListTypes.TOP_RATED, films, CARDS_EXTRA_QUANTITY, 2);
+  renderFilmsList(ListTypes.MOST_COMMENTED, films, CARDS_EXTRA_QUANTITY, 3);
+}
 
 // рендер кнопки show more
-if (films.length > CARDS_MAIN_QUANTITY) {
+if (films.length > CARDS_MAIN_QUANTITY & filmsNumber !== 0) {
   let renderedFilmsCount = CARDS_MAIN_QUANTITY;
 
   const filmsListElement = filmsElement.querySelector(`.films-list`);
   render(filmsListElement, new ShowMoreButton().getElement(), RenderPosition.BEFORE_END);
   const showMoreButton = filmsElement.querySelector(`.films-list__show-more`);
 
+  // обработчик события нажатия на кнопку show more
   const onShowMoreButtonClick = (evt) => {
     evt.preventDefault();
     films
@@ -148,5 +167,5 @@ if (films.length > CARDS_MAIN_QUANTITY) {
 
 // рендер блока статистики в  footer'е
 const footerStatisticsElement = siteFooterElement.querySelector(`.footer__statistics`);
-render(footerStatisticsElement, new FooterStats(getRandomInteger(1, 100000)).getElement(), RenderPosition.BEFORE_END);
+render(footerStatisticsElement, new FooterStats(filmsNumber).getElement(), RenderPosition.BEFORE_END);
 

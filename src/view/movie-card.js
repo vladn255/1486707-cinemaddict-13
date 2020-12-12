@@ -37,8 +37,7 @@ const createFilmArticle = (filmCard) => {
         <p class="film-card__description">${shortDescription}</p>
         <a class="film-card__comments">${commentsCount} comments</a>
         <div class="film-card__controls">
-           ${controls.map((control) => {
-      const {name, modifier, isActive} = control;
+           ${controls.map((name, modifier, isActive) => {
       return (
         `<button class="film-card__controls-item button film-card__controls-item--${modifier}
         ${isActive
