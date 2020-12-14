@@ -1,4 +1,5 @@
-import {getRandomInteger, turnMinutesToHours} from "../utils.js";
+import {getRandomInteger} from "../utils/common.js";
+import {turnMinutesToHours} from "../utils/date-time.js";
 
 const FilmData = {
   RANDOM_SENTENCES: [

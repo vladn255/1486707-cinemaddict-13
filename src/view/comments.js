@@ -1,4 +1,5 @@
-import {getYMDHMDate, createElement} from "../utils.js";
+import {getYMDHMDate} from "../utils/date-time.js";
+import AbstractView from "./abstract.js";
 
 const createCommentTemplate = (comment) => {
   const {emoji, text, author, date} = comment;
@@ -20,24 +21,13 @@ const createCommentTemplate = (comment) => {
   );
 };
 
-export default class Comment {
+export default class Comment extends AbstractView {
   constructor(comment) {
-    this._element = null;
+    super();
     this._comment = comment;
   }
 
   getTemplate() {
     return createCommentTemplate(this._comment);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
