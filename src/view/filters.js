@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
 const FilterNames = {
   all: `All movies`,
@@ -43,24 +43,13 @@ const createNavMenuTemplate = (filters) => {
 };
 
 
-export default class Filters {
+export default class Filters extends AbstractView {
   constructor(filters) {
-    this._element = null;
+    super();
     this._filters = filters;
   }
 
   getTemplate() {
     return createNavMenuTemplate(this._filters);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

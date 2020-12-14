@@ -1,4 +1,6 @@
-import {getDMYDate, createElement} from "../utils.js";
+import {getDMYDate} from "../utils/date-time.js";
+import {KeyBindings} from "../utils/render.js";
+import AbstractView from "./abstract.js";
 
 const FilmDetails = {
   director: `Director`,
@@ -130,24 +132,37 @@ const createPopUpTemplate = (filmCard) => {
   );
 };
 
-export default class Popup {
+export default class Popup extends AbstractView {
   constructor(filmCard) {
-    this._element = null;
+    super();
     this._filmCard = filmCard;
+    this._clickClosePopupHandler = this._clickClosePopupHandler.bind(this);
+    this._escPressClosePopupHandler = this._escPressClosePopupHandler.bind(this);
   }
 
   getTemplate() {
     return createPopUpTemplate(this._filmCard);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
+  _clickClosePopupHandler(evt) {
+    evt.preventDefault();
+    this._callback.click();
   }
 
-  removeElement() {
-    this._element = null;
+  _escPressClosePopupHandler(evt) {
+    if (evt.key === KeyBindings.ESCAPE) {
+      evt.preventDefault();
+      this._callback.keydown();
+    }
+  }
+
+  setClickClosePopupHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickClosePopupHandler);
+  }
+
+  setEscPressClosePopupHandler(callback) {
+    this._callback.keydown = callback;
+    document.addEventListener(`keydown`, this._escPressClosePopupHandler);
   }
 }

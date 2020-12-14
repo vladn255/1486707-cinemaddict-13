@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import Abstract from "./abstract.js";
 
 const createFilmsListTemplate = (listType) => {
   const {title, isHidden, isExtra} = listType;
@@ -13,32 +13,22 @@ const createFilmsListTemplate = (listType) => {
       : ``
     }">${title}</h2>
 
-       <div class="films-list__container">
+      <div class="films-list__container">
 
-       </div>
-    </section>`
+      </div>
+     </section>`
   );
 };
 
 
-export default class FilmsList {
+export default class FilmsList extends Abstract {
   constructor(listType) {
+    super();
     this._element = null;
     this._listType = listType;
   }
 
   getTemplate() {
     return createFilmsListTemplate(this._listType);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
