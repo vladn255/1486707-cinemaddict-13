@@ -127,11 +127,15 @@ const generateCountry = () => {
   return FilmData.COUNTRIES[getRandomInteger(0, FilmData.COUNTRIES.length - 1)];
 };
 
+// генерация случайного id
+const generateId = () => Date.now() + parseInt(Math.random() * 1000, 10);
+
 const generateFilmCard = () => {
 
   const COMMENT_COUNT_MAX = 5;
 
   return {
+    id: generateId(),
     cover: generateCoverImage(),
     title: generateTitle(),
     rate: generateRate(),
