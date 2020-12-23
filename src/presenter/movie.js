@@ -1,10 +1,9 @@
 import {RenderPosition, render, replace, remove} from "../utils/render.js";
 
-import MovieCard from "../view/movie-card.js";
-import Popup from "../view/popup.js";
-import Comment from "../view/comments.js";
+import MovieCardView from "../view/movie-card.js";
+import PopupView from "../view/popup.js";
+import CommentView from "../view/comments.js";
 
-const siteFooterElement = document.querySelector(`.footer`);
 const COMMENTS_QUANTITY = 3;
 
 export default class Movie {
@@ -24,24 +23,44 @@ export default class Movie {
 
   init(movie) {
     this._movie = movie;
-    this._movieCard = new MovieCard(movie);
-    this._newPopupItem = new Popup(movie);
 
     const prevMovieCard = this._movieCard;
     const prevPopupItem = this._newPopupItem;
 
-    if (
-      prevMovieCard === null ||
-      prevPopupItem === null
-    ) {
-      this._renderMovieCard();
+    this._movieCard = new MovieCardView(movie);
+    this._newPopupItem = new PopupView(movie);
 
-    } else {
-      replace(this._movieCard, prevMovieCard);
-      replace(this._newPopupItem, prevPopupItem);
+    this._movieCard.setFilmCardClickHandler(this._filmCardClickHandler);
 
+    this._movieCard.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._movieCard.setHistoryClickHandler(this._handleHistoryClick);
+    this._movieCard.setFavoriteClickHandler(this._handleFavoriteClick);
+
+    this._newPopupItem.setClickClosePopupHandler(this._closePopupHandler);
+    this._newPopupItem.setEscPressClosePopupHandler(this._closePopupHandler);
+
+    this._newPopupItem.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._newPopupItem.setHistoryClickHandler(this._handleHistoryClick);
+    this._newPopupItem.setFavoriteClickHandler(this._handleFavoriteClick);
+
+    if (prevMovieCard === null) {
       this._renderMovieCard();
+      return;
     }
+
+    if (this._container.contains(prevMovieCard.getElement())) {
+      replace(this._movieCard, prevMovieCard);
+    }
+
+    if (prevPopupItem !== null && document.body.contains(prevPopupItem.getElement())) {
+      replace(this._newPopupItem, prevPopupItem);
+      remove(prevPopupItem);
+      this._closePopup();
+      this._showPopup();
+    }
+
+    remove(prevMovieCard);
+
   }
 
   // удаление карточки
@@ -58,32 +77,24 @@ export default class Movie {
   // рендер одной карточки фильма
   _renderMovieCard() {
     render(this._container, this._movieCard, RenderPosition.BEFORE_END);
-
-    this._movieCard.setFilmCardClickHandler(this._filmCardClickHandler);
-
-    this._movieCard.setWatchlistClickHandler(this._handleWatchlistClick);
-    this._movieCard.setHistoryClickHandler(this._handleHistoryClick);
-    this._movieCard.setFavoriteClickHandler(this._handleFavoriteClick);
   }
 
   // показ попапа
   _showPopup() {
-    document.querySelector(`body`).classList.add(`hide-overflow`);
+    document.body.classList.add(`hide-overflow`);
 
-    siteFooterElement.appendChild(this._newPopupItem.getElement());
+    document.body.appendChild(this._newPopupItem.getElement());
     const commentsListContainer = this._newPopupItem.getElement().querySelector(`.film-details__comments-list`);
     for (let j = 0; j < this._commentsCount; j++) {
-      render(commentsListContainer, new Comment(this._generateComment()), RenderPosition.BEFORE_END);
+      render(commentsListContainer, new CommentView(this._generateComment()), RenderPosition.BEFORE_END);
     }
 
-    this._newPopupItem.setClickClosePopupHandler(this._closePopupHandler);
-    this._newPopupItem.setEscPressClosePopupHandler(this._closePopupHandler);
   }
 
   // скрытие попапа
   _closePopup() {
-    document.querySelector(`body`).classList.remove(`hide-overflow`);
-    siteFooterElement.removeChild(this._newPopupItem.getElement());
+    document.body.classList.remove(`hide-overflow`);
+    this._newPopupItem.getElement().remove();
   }
 
   // обработчик закрытия попапа
