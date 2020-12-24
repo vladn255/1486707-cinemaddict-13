@@ -48,6 +48,7 @@ export default class MoviesList {
     this._ShowMoreButtonClickHandler = this._ShowMoreButtonClickHandler.bind(this);
     this._handleMovieChange = this._handleMovieChange.bind(this);
     this._moviePresenter = {};
+    this._list = [];
   }
 
   init(container, films) {
@@ -67,16 +68,13 @@ export default class MoviesList {
 
   // рендер списка карточек фильма
   _renderMovieCards(container, filmsList, cardsCount) {
-    const filmsToRender = filmsList
-    .slice(this._renderedFilmsCount, this._renderedFilmsCount + MoviesListData.CARDS_MAIN_QUANTITY);
-
-    for (let i = 0; i < Math.min(filmsToRender.length, cardsCount); i++) {
+    for (let i = 0; i < Math.min(filmsList.length, cardsCount); i++) {
       const moviePresenter = new MoviePresenter(container, generateComment, this._handleMovieChange);
-      moviePresenter.init(filmsToRender[i]);
-      this._moviePresenter[filmsToRender[i].id] = moviePresenter;
+      moviePresenter.init(filmsList[i]);
+      this._moviePresenter[filmsList[i].id] = moviePresenter;
     }
-
-    this._renderedFilmsCount += MoviesListData.CARDS_MAIN_QUANTITY;
+    this._list.push(this._moviePresenter);
+    this._moviePresenter = {};
   }
 
   // рендер произвольного списка фильмов
@@ -112,7 +110,9 @@ export default class MoviesList {
   _handleMovieChange(updatedMovie) {
     this._films = updateItem(this._films, updatedMovie);
 
-    this._moviePresenter[updatedMovie.id].init(updatedMovie);
+    this._list.forEach((presenter) => {
+      presenter[updatedMovie.id].init(updatedMovie);
+    });
   }
 
   // рендер кнопки show more

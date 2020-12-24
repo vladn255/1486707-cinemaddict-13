@@ -48,7 +48,7 @@ export default class Movie {
       return;
     }
 
-    if (this._container.contains(prevMovieCard.getElement())) {
+    while (this._container.contains(prevMovieCard.getElement())) {
       replace(this._movieCard, prevMovieCard);
     }
 
