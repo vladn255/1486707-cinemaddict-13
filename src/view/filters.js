@@ -1,11 +1,5 @@
 import AbstractView from "./abstract.js";
-
-const FilterNames = {
-  all: `All movies`,
-  watchlist: `Watchlist`,
-  history: `History`,
-  favorites: `Favorites`
-};
+import {FilterNames} from "../utils/const.js";
 
 const createFilterItemTemplate = (filter, isActive) => {
   const {name, count} = filter;

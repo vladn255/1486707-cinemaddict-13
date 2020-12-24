@@ -1,17 +1,8 @@
 import {getDMYDate} from "../utils/date-time.js";
 import {KeyBindings} from "../utils/render.js";
+import {FilmDetails} from "../utils/const.js";
 import AbstractView from "./abstract.js";
 
-const FilmDetails = {
-  director: `Director`,
-  screenwriters: `Writers`,
-  cast: `Actors`,
-  releaseDate: `Release Date`,
-  duration: `Runtime`,
-  country: `Country`,
-  genres: `Genres`,
-  genre: `Genre`
-};
 
 // создание шаблона сведения о фильме
 const createFilmDetailItemTemplate = (detail, detailName) => {

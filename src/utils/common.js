@@ -29,9 +29,13 @@ const updateItem = (items, update) => {
   ];
 };
 
+// сортировка по рейтингу
+const sortByRate = (movieA, movieB) => movieB.rate - movieA.rate;
+
 export {
   getRandomInteger,
   getShortText,
-  updateItem
+  updateItem,
+  sortByRate
 };
 

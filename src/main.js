@@ -3,7 +3,6 @@ import {RenderPosition, render} from "./utils/render.js";
 
 import UserRankView from "./view/user-rank.js";
 import FiltersView from "./view/filters.js";
-import SortMenuView from "./view/sort-menu.js";
 
 import FooterStatsView from "./view/footer-stats.js";
 // import StatsView from "./view/stats.js";
@@ -30,11 +29,6 @@ render(siteHeaderElement, new UserRankView(), RenderPosition.BEFORE_END);
 
 // рендер меню навигации
 render(siteMainElement, new FiltersView(filters), RenderPosition.BEFORE_END);
-
-// рендер меню фильтров
-if (filmsNumber !== 0) {
-  render(siteMainElement, new SortMenuView(), RenderPosition.BEFORE_END);
-}
 
 const moviesList = new MoviesListPresenter(filmsNumber);
 moviesList.init(siteMainElement, films);
