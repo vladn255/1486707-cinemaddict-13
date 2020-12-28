@@ -30,8 +30,8 @@ render(siteHeaderElement, new UserRankView(), RenderPosition.BEFORE_END);
 // рендер меню навигации
 render(siteMainElement, new FiltersView(filters), RenderPosition.BEFORE_END);
 
-const moviesList = new MoviesListPresenter(filmsNumber);
-moviesList.init(siteMainElement, films);
+const moviesList = new MoviesListPresenter(siteMainElement);
+moviesList.init(films);
 
 // // рендер статистики пользователя в main
 // render(siteMainElement, new StatsView(), RenderPosition.BEFORE_END);

@@ -20,7 +20,7 @@ const renderTemplate = (container, template, place) => {
 };
 
 // рендер DOM-элемента
-const render = (container, child, place) => {
+const render = (container, child, place = RenderPosition.BEFORE_END) => {
   if (container instanceof Abstract) {
     container = container.getElement();
   }
