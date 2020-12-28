@@ -64,7 +64,9 @@ export default class MoviesList {
     this._films = films.slice();
     this._sourceFilms = films.slice();
 
-    this._renderSortMenu();
+    if (this._films.length) {
+      this._renderSortMenu();
+    }
     this._renderContainer();
     this._renderMoviesLists();
   }
@@ -97,10 +99,6 @@ export default class MoviesList {
     this._filmsContainerList.push(flimsListComponent);
 
     render(this._filmsElement, flimsListComponent, RenderPosition.BEFORE_END);
-
-    const filmsListContainer = this._container.querySelector(`.films-list__container`);
-
-    this._renderMovieCards(filmsListContainer, this._films, MoviesListData.CARDS_EMPTY_QUANTITY);
   }
 
   // рендер основного списка фильмов "All Movies"
@@ -109,11 +107,11 @@ export default class MoviesList {
     this._allMoviesContainer = flimsListComponent.getElement();
     this._filmsContainerList.push(flimsListComponent);
 
-    render(this._filmsElement, flimsListComponent, RenderPosition.BEFORE_END);
-
     this._renderMovieCards(this._allMoviesContainer.querySelector(`.films-list__container`), this._films, MoviesListData.CARDS_MAIN_QUANTITY);
 
-    if (this._films.length > MoviesListData.CARDS_MAIN_QUANTITY && this._filmsNumber !== 0) {
+    render(this._filmsElement, flimsListComponent, RenderPosition.BEFORE_END);
+
+    if (this._films.length > MoviesListData.CARDS_MAIN_QUANTITY) {
       this._renderShowMoreButton();
     }
   }
@@ -124,9 +122,9 @@ export default class MoviesList {
     this._topRatedContainer = flimsListComponent.getElement();
     this._filmsContainerList.push(flimsListComponent);
 
-    render(this._filmsElement, flimsListComponent, RenderPosition.BEFORE_END);
-
     this._renderMovieCards(this._topRatedContainer.querySelector(`.films-list__container`), this._films, MoviesListData.CARDS_EXTRA_QUANTITY);
+
+    render(this._filmsElement, flimsListComponent, RenderPosition.BEFORE_END);
   }
 
   // рендер дополнительного списка фильмов "Most Commented"
@@ -135,9 +133,9 @@ export default class MoviesList {
     this._mostCommentedContainer = flimsListComponent.getElement();
     this._filmsContainerList.push(flimsListComponent);
 
-    render(this._filmsElement, flimsListComponent, RenderPosition.BEFORE_END);
-
     this._renderMovieCards(this._mostCommentedContainer.querySelector(`.films-list__container`), this._films, MoviesListData.CARDS_EXTRA_QUANTITY);
+
+    render(this._filmsElement, flimsListComponent, RenderPosition.BEFORE_END);
   }
 
   // рендер основного и дополнительных списков фильмов
@@ -149,19 +147,17 @@ export default class MoviesList {
 
   // отрисовка списков фильмов
   _renderMoviesLists() {
-    if (this._films.length === 0) {
-      this._renderEmptyList();
-    } else {
-      this._renderMainMoviesLists();
-    }
+    return !this._films.length
+      ? this._renderEmptyList()
+      : this._renderMainMoviesLists();
   }
 
   // очистка списка фильмов
   _clearMoviesList() {
     this._moviesList.forEach((presenter) => {
       Object
-    .values(presenter)
-    .forEach((presenterItem) => presenterItem.destroy());
+       .values(presenter)
+       .forEach((presenterItem) => presenterItem.destroy());
       presenter = {};
     });
     this._moviesList = [];
@@ -227,6 +223,9 @@ export default class MoviesList {
       return;
     }
 
+    this._sortMenuComponent.getElement().querySelector(`[data-sort-type=${this._currentSortButton}]`).classList.remove(`sort__button--active`);
+    this._sortMenuComponent.getElement().querySelector(`[data-sort-type=${sortButton}]`).classList.add(`sort__button--active`);
+
     this._sortMovies(sortButton);
     this._clearMoviesList();
     this._renderMoviesLists();
@@ -234,10 +233,8 @@ export default class MoviesList {
 
   // рендер меню фильтров
   _renderSortMenu() {
-    if (this._films.length !== 0) {
-      render(this._container, this._sortMenuComponent, RenderPosition.BEFORE_END);
-      this._sortMenuComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
-    }
+    render(this._container, this._sortMenuComponent, RenderPosition.BEFORE_END);
+    this._sortMenuComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
 }
