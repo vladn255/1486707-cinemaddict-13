@@ -26,10 +26,14 @@ const getYMDHMDate = (date) => {
   return dayjs(date).format(`YYYY/MM/DD HH:mm`);
 };
 
+// определение разницы в дате
+const sortByDate = (movieA, movieB) => dayjs(movieB.releaseDate).diff(movieA.releaseDate);
+
 
 export {
   turnMinutesToHours,
   getYDate,
   getDMYDate,
   getYMDHMDate,
+  sortByDate
 };

@@ -1,17 +1,8 @@
 import {getDMYDate} from "../utils/date-time.js";
 import {KeyBindings} from "../utils/render.js";
+import {FilmDetails} from "../utils/const.js";
 import AbstractView from "./abstract.js";
 
-const FilmDetails = {
-  director: `Director`,
-  screenwriters: `Writers`,
-  cast: `Actors`,
-  releaseDate: `Release Date`,
-  duration: `Runtime`,
-  country: `Country`,
-  genres: `Genres`,
-  genre: `Genre`
-};
 
 // создание шаблона сведения о фильме
 const createFilmDetailItemTemplate = (detail, detailName) => {
@@ -26,7 +17,25 @@ const createFilmDetailItemTemplate = (detail, detailName) => {
 // создание шаблона информации о фильме
 const createPopUpTemplate = (filmCard) => {
 
-  const {cover, title, rate, description, originalTitle, ageRestriction, releaseDate, duration, genres, director, screenwriters, cast, country} = filmCard;
+  const {cover, title, rate, description, originalTitle, ageRestriction, releaseDate, duration, genres, director, screenwriters, cast, country, isToWatch, isAlreadyWatched, isInFavorites} = filmCard;
+
+  const controls = [
+    {
+      name: `Add to watchlist`,
+      modifier: `watchlist`,
+      isActive: isToWatch
+    },
+    {
+      name: `Already watched`,
+      modifier: `watched`,
+      isActive: isAlreadyWatched
+    },
+    {
+      name: `Add to favorites`,
+      modifier: `favorite`,
+      isActive: isInFavorites
+    }
+  ];
 
   const genresTemplate = genres.map((item) => `<span class="film-details__genre">${item}</span>`).join(``);
 
@@ -77,14 +86,14 @@ const createPopUpTemplate = (filmCard) => {
           </div>
 
           <section class="film-details__controls">
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
-            <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
-
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
-            <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
-
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
-            <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+            ${controls.map(({name, modifier, isActive}) => {
+      return (`
+            <input type="checkbox" class="film-details__control-input visually-hidden" id="${modifier}" name="${modifier}" ${isActive
+          ? `checked`
+          : ``}>
+            <label for="${modifier}" class="film-details__control-label film-details__control-label--${modifier}">${name}</label>
+            `);
+    }).join(``)}
           </section>
         </div>
 
@@ -138,6 +147,9 @@ export default class Popup extends AbstractView {
     this._filmCard = filmCard;
     this._clickClosePopupHandler = this._clickClosePopupHandler.bind(this);
     this._escPressClosePopupHandler = this._escPressClosePopupHandler.bind(this);
+    this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
+    this._historyClickHandler = this._historyClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
   }
 
   getTemplate() {
@@ -156,6 +168,21 @@ export default class Popup extends AbstractView {
     }
   }
 
+  _watchlistClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.watchlistClick();
+  }
+
+  _historyClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.historyClick();
+  }
+
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+  }
+
   setClickClosePopupHandler(callback) {
     this._callback.click = callback;
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickClosePopupHandler);
@@ -164,5 +191,20 @@ export default class Popup extends AbstractView {
   setEscPressClosePopupHandler(callback) {
     this._callback.keydown = callback;
     document.addEventListener(`keydown`, this._escPressClosePopupHandler);
+  }
+
+  setWatchlistClickHandler(callback) {
+    this._callback.watchlistClick = callback;
+    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._watchlistClickHandler);
+  }
+
+  setHistoryClickHandler(callback) {
+    this._callback.historyClick = callback;
+    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._historyClickHandler);
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._favoriteClickHandler);
   }
 }
