@@ -2,16 +2,13 @@ import {RenderPosition, render, replace, remove} from "../utils/render.js";
 
 import MovieCardView from "../view/movie-card.js";
 import PopupView from "../view/popup.js";
-import CommentView from "../view/comments.js";
-
-const COMMENTS_QUANTITY = 3;
 
 export default class Movie {
   constructor(container, generateComment, changeData) {
     this._container = container;
     this._generateComment = generateComment;
     this._changeData = changeData;
-    this._commentsCount = COMMENTS_QUANTITY;
+
     this._movieCardView = null;
     this._newPopupView = null;
     this._filmCardClickHandler = this._filmCardClickHandler.bind(this);
@@ -21,8 +18,9 @@ export default class Movie {
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
   }
 
-  init(movie) {
+  init(movie, comments) {
     this._movie = movie;
+    this._commentsList = comments;
 
     const prevMovieView = this._movieCardView;
     const prevPopupView = this._newPopupView;
@@ -85,10 +83,10 @@ export default class Movie {
 
     document.body.appendChild(this._newPopupView.getElement());
     const commentsListContainer = this._newPopupView.getElement().querySelector(`.film-details__comments-list`);
-    for (let j = 0; j < this._commentsCount; j++) {
-      render(commentsListContainer, new CommentView(this._generateComment()), RenderPosition.BEFORE_END);
-    }
 
+    this._commentsList.forEach((comment) => {
+      render(commentsListContainer, comment, RenderPosition.BEFORE_END);
+    });
   }
 
   // скрытие попапа

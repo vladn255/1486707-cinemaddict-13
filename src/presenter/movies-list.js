@@ -9,6 +9,7 @@ import FilmsListView from "../view/films-list";
 import FilmsWrapperView from "../view/films-wrapper.js";
 import MoviePresenter from "./movie.js";
 import SortMenuView from "../view/sort-menu.js";
+import CommentView from "../view/comments.js";
 
 import {generateComment} from "../mock/comment.js";
 
@@ -36,6 +37,8 @@ const ListTypes = {
   }
 };
 
+const COMMENTS_QUANTITY = 3;
+
 export default class MoviesList {
   constructor(container) {
     this._container = container;
@@ -45,6 +48,7 @@ export default class MoviesList {
     this._generateComment = generateComment;
     this._renderedFilmsCount = MoviesListData.CARDS_MAIN_QUANTITY;
     this._currentSortButton = SortType.DEFAULT;
+    this._commentsCount = COMMENTS_QUANTITY;
 
     this._filmsElement = null;
     this._newPopupItem = null;
@@ -54,6 +58,7 @@ export default class MoviesList {
     this._moviePresenter = {};
     this._moviesList = [];
     this._filmsContainerList = [];
+    this._comments = [];
 
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleMovieChange = this._handleMovieChange.bind(this);
@@ -79,8 +84,12 @@ export default class MoviesList {
 
   // рендер карточки фильма
   _renderMovieCard(container, film) {
+    for (let j = 0; j < this._commentsCount; j++) {
+      this._comments.push(new CommentView(this._generateComment()));
+    }
     const moviePresenter = new MoviePresenter(container, generateComment, this._handleMovieChange);
-    moviePresenter.init(film);
+    moviePresenter.init(film, this._comments);
+    this._comments = [];
     this._moviePresenter[film.id] = moviePresenter;
   }
 
