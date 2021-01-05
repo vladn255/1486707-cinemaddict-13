@@ -36,6 +36,8 @@ const ListTypes = {
   }
 };
 
+const COMMENTS_QUANTITY = 3;
+
 export default class MoviesList {
   constructor(container) {
     this._container = container;
@@ -45,6 +47,7 @@ export default class MoviesList {
     this._generateComment = generateComment;
     this._renderedFilmsCount = MoviesListData.CARDS_MAIN_QUANTITY;
     this._currentSortButton = SortType.DEFAULT;
+    this._commentsCount = COMMENTS_QUANTITY;
 
     this._filmsElement = null;
     this._newPopupItem = null;
@@ -54,6 +57,7 @@ export default class MoviesList {
     this._moviePresenter = {};
     this._moviesList = [];
     this._filmsContainerList = [];
+    this._comments = [];
 
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleMovieChange = this._handleMovieChange.bind(this);
@@ -79,7 +83,12 @@ export default class MoviesList {
 
   // рендер карточки фильма
   _renderMovieCard(container, film) {
-    const moviePresenter = new MoviePresenter(container, generateComment, this._handleMovieChange);
+    const comments = [];
+    for (let j = 0; j < this._commentsCount; j++) {
+      comments.push(this._generateComment());
+    }
+    film.comments = comments;
+    const moviePresenter = new MoviePresenter(container, this._handleMovieChange);
     moviePresenter.init(film);
     this._moviePresenter[film.id] = moviePresenter;
   }

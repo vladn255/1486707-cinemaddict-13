@@ -2,16 +2,13 @@ import {RenderPosition, render, replace, remove} from "../utils/render.js";
 
 import MovieCardView from "../view/movie-card.js";
 import PopupView from "../view/popup.js";
-import CommentView from "../view/comments.js";
-
-const COMMENTS_QUANTITY = 3;
 
 export default class Movie {
-  constructor(container, generateComment, changeData) {
+  constructor(container, changeData) {
     this._container = container;
-    this._generateComment = generateComment;
+
     this._changeData = changeData;
-    this._commentsCount = COMMENTS_QUANTITY;
+
     this._movieCardView = null;
     this._newPopupView = null;
     this._filmCardClickHandler = this._filmCardClickHandler.bind(this);
@@ -23,12 +20,12 @@ export default class Movie {
 
   init(movie) {
     this._movie = movie;
-
+    this._commentsList = movie.comments;
     const prevMovieView = this._movieCardView;
     const prevPopupView = this._newPopupView;
 
     this._movieCardView = new MovieCardView(movie);
-    this._newPopupView = new PopupView(movie);
+    this._newPopupView = new PopupView(movie, this._commentsComponent);
 
     this._movieCardView.setFilmCardClickHandler(this._filmCardClickHandler);
 
@@ -82,18 +79,13 @@ export default class Movie {
   // показ попапа
   _showPopup() {
     document.body.classList.add(`hide-overflow`);
-
     document.body.appendChild(this._newPopupView.getElement());
-    const commentsListContainer = this._newPopupView.getElement().querySelector(`.film-details__comments-list`);
-    for (let j = 0; j < this._commentsCount; j++) {
-      render(commentsListContainer, new CommentView(this._generateComment()), RenderPosition.BEFORE_END);
-    }
-
   }
 
   // скрытие попапа
   _closePopup() {
     document.body.classList.remove(`hide-overflow`);
+    this._newPopupView.reset(this._movie);
     this._newPopupView.getElement().remove();
   }
 
