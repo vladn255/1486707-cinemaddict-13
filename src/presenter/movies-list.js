@@ -9,7 +9,6 @@ import FilmsListView from "../view/films-list";
 import FilmsWrapperView from "../view/films-wrapper.js";
 import MoviePresenter from "./movie.js";
 import SortMenuView from "../view/sort-menu.js";
-import CommentView from "../view/comments.js";
 
 import {generateComment} from "../mock/comment.js";
 
@@ -84,12 +83,13 @@ export default class MoviesList {
 
   // рендер карточки фильма
   _renderMovieCard(container, film) {
+    const comments = [];
     for (let j = 0; j < this._commentsCount; j++) {
-      this._comments.push(new CommentView(this._generateComment()));
+      comments.push(this._generateComment());
     }
-    const moviePresenter = new MoviePresenter(container, generateComment, this._handleMovieChange);
-    moviePresenter.init(film, this._comments);
-    this._comments = [];
+    film.comments = comments;
+    const moviePresenter = new MoviePresenter(container, this._handleMovieChange);
+    moviePresenter.init(film);
     this._moviePresenter[film.id] = moviePresenter;
   }
 
