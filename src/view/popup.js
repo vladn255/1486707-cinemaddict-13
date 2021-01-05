@@ -6,35 +6,27 @@ import SmartView from "./smart.js";
 
 // создание шаблона сведения о фильме
 const createFilmDetailItemTemplate = (detail, detailName) => {
-
   return (
     `<tr class="film-details__row">
       <td class="film-details__term">${FilmDetails[detailName]}</td>
       <td class="film-details__cell">${detail}</td>
-    </tr>`);
+    </tr>`
+  );
 };
 
 // создание элемента эмоджи
 const createEmojiItem = (emoji) => {
-  return (`<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}">
-           <label class="film-details__emoji-label" for="emoji-${emoji}">
-            <img src="./images/emoji/${emoji}.png" width="30" height="30" alt="emoji">
-           </label>`);
-};
-
-// создание списка эмоджи
-const createEmojiSection = (emojiList) => {
-  let emojiSection = ``;
-  for (let i = 0; i < emojiList.length; i++) {
-    emojiSection += createEmojiItem(emojiList[i]);
-  }
-  return (emojiSection);
+  return (
+    `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}">
+     <label class="film-details__emoji-label" for="emoji-${emoji}">
+       <img src="./images/emoji/${emoji}.png" width="30" height="30" alt="emoji">
+     </label>`
+  );
 };
 
 // создание комментария
 const createCommentItem = (comment) => {
   const {emoji, text, author, date} = comment;
-
   return (
     `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
@@ -50,15 +42,6 @@ const createCommentItem = (comment) => {
       </div>
     </li>`
   );
-};
-
-// создание списка комментариев
-const createCommentsSection = (comments) => {
-  let commentsSection = ``;
-  for (let i = 0; i < comments.length; i++) {
-    commentsSection += createCommentItem(comments[i]);
-  }
-  return (commentsSection);
 };
 
 // создание шаблона информации о фильме
@@ -92,7 +75,6 @@ const createPopUpTemplate = (data) => {
   ];
 
   const genresTemplate = genres.map((item) => `<span class="film-details__genre">${item}</span>`).join(``);
-
   return (
     `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -156,7 +138,9 @@ const createPopUpTemplate = (data) => {
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
             <ul class="film-details__comments-list">
-              ${createCommentsSection(comments)}
+              ${comments.map((comment) => {
+      return createCommentItem(comment);
+    }).join(``)}
             </ul>
 
             <div class="film-details__new-comment">
@@ -174,7 +158,9 @@ const createPopUpTemplate = (data) => {
               </label>
 
               <div class="film-details__emoji-list">
-                  ${createEmojiSection(emojis)}
+                  ${emojis.map((emoji) => {
+      return createEmojiItem(emoji);
+    }).join(``)}
               </div>
             </div>
           </section>
@@ -308,7 +294,6 @@ export default class Popup extends SmartView {
   _commentInputHandler(evt) {
     evt.preventDefault();
 
-    this._scrollPosition = this.getElement().scrollTop;
     this.updateData({
       newComment: evt.target.value,
     }, true);

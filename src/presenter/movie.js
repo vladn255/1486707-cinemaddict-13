@@ -23,7 +23,6 @@ export default class Movie {
     this._commentsList = movie.comments;
     const prevMovieView = this._movieCardView;
     const prevPopupView = this._newPopupView;
-    this._commentsComponent = [];
 
     this._movieCardView = new MovieCardView(movie);
     this._newPopupView = new PopupView(movie, this._commentsComponent);
