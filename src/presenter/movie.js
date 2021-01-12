@@ -1,4 +1,5 @@
 import {RenderPosition, render, replace, remove} from "../utils/render.js";
+import {UserAction, UpdateType} from "../utils/const.js";
 
 import MovieCardView from "../view/movie-card.js";
 import PopupView from "../view/popup.js";
@@ -96,16 +97,25 @@ export default class Movie {
 
   // обработчик нажатия на кнопку "Add to watchlist"
   _handleWatchlistClick() {
-    this._changeData(Object.assign({}, this._movie, {isToWatch: !this._movie.isToWatch}));
+    this._changeData(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.PATCH,
+        Object.assign({}, this._movie, {isToWatch: !this._movie.isToWatch}));
   }
 
   // обработчик нажатия на кнопку "Mark as watched"
   _handleHistoryClick() {
-    this._changeData(Object.assign({}, this._movie, {isAlreadyWatched: !this._movie.isAlreadyWatched}));
+    this._changeData(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.PATCH,
+        Object.assign({}, this._movie, {isAlreadyWatched: !this._movie.isAlreadyWatched}));
   }
 
   // обработчик нажатия на кнопку "Mark as favorite"
   _handleFavoriteClick() {
-    this._changeData(Object.assign({}, this._movie, {isInFavorites: !this._movie.isInFavorites}));
+    this._changeData(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.PATCH,
+        Object.assign({}, this._movie, {isInFavorites: !this._movie.isInFavorites}));
   }
 }

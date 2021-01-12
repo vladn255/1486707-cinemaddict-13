@@ -4,13 +4,6 @@ const SortType = {
   BY_RATE: `by-rate`
 };
 
-const FilterNames = {
-  all: `All movies`,
-  watchlist: `Watchlist`,
-  history: `History`,
-  favorites: `Favorites`
-};
-
 const FilmDetails = {
   director: `Director`,
   screenwriters: `Writers`,
@@ -28,9 +21,29 @@ const MoviesListData = {
   CARDS_EMPTY_QUANTITY: 0
 };
 
+const UserAction = {
+  UPDATE_MOVIE: `UPDATE_MOVIE`,
+
+};
+
+const UpdateType = {
+  PATCH: `PATCH`,
+  MINOR: `MINOR`,
+  MAJOR: `MAJOR`
+};
+
+const FilterType = {
+  ALL_MOVIES: `all`,
+  WATCHLIST: `watchlist`,
+  HISTORY: `history`,
+  FAVORITES: `favorites`
+};
+
 export {
   SortType,
-  FilterNames,
   FilmDetails,
-  MoviesListData
+  MoviesListData,
+  UserAction,
+  UpdateType,
+  FilterType
 };

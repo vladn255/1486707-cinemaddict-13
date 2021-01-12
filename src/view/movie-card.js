@@ -39,15 +39,17 @@ const createFilmArticle = (filmCard) => {
         <p class="film-card__description">${shortDescription}</p>
         <a class="film-card__comments">${commentsCount} comments</a>
         <div class="film-card__controls">
-           ${controls.map(({name, modifier, isActive}) => {
-      return (
-        `<button class="film-card__controls-item button film-card__controls-item--${modifier}
-        ${isActive
-          ? ` film-card__controls-item--active`
-          : ``}"
-         type="button">${name}</button>`
-      );
-    }).join(``)}
+           ${controls
+            .map(({name, modifier, isActive}) => {
+              return (
+                `<button class="film-card__controls-item button film-card__controls-item--${modifier}
+                  ${isActive
+                  ? ` film-card__controls-item--active`
+                  : ``}"
+                 type="button">${name}</button>`
+              );
+            })
+            .join(``)}
 
         </div>
      </article>`
