@@ -4,8 +4,6 @@ import {UserAction, UpdateType} from "../utils/const.js";
 import MovieCardView from "../view/movie-card.js";
 import PopupView from "../view/popup.js";
 
-import CommentsPresenter from "./comments.js";
-
 export default class Movie {
   constructor(container, changeData, commentsModel) {
     this._container = container;
@@ -20,6 +18,8 @@ export default class Movie {
     this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
     this._handleHistoryClick = this._handleHistoryClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+
+    this._commentsModel.addObserver(this._handleModelEvent);
   }
 
   init(movie) {
@@ -89,18 +89,15 @@ export default class Movie {
     this._popupView.setHistoryClickHandler(this._handleHistoryClick);
     this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
 
+    this._popupView.setDeleteClickHandler(this._handleDeleteClick);
+
     document.body.appendChild(this._popupView.getElement());
-
-    const commentsContainer = this._popupView.getElement().querySelector(`.film-details__comments-list`);
-    const commentsPresenter = new CommentsPresenter(commentsContainer, this._changeData, this._commentsModel);
-
-    commentsPresenter.init();
   }
 
   // скрытие попапа
   _closePopup() {
     document.body.classList.remove(`hide-overflow`);
-    this._popupView.reset(this._movie);
+    this._popupView.reset(this._movie, this._comments);
     this._popupView.getElement().remove();
   }
 
@@ -131,5 +128,31 @@ export default class Movie {
         UserAction.UPDATE_MOVIE,
         UpdateType.PATCH,
         Object.assign({}, this._movie, {isInFavorites: !this._movie.isInFavorites}));
+  }
+
+  // обработчик удаления комментария
+  _handleDeleteClick() {
+    this._changeData(
+        UserAction.DELETE_COMMENT,
+        UpdateType.PATCH
+
+    );
+  }
+
+  // обработчик изменения представления
+  _handleViewAction(actionType, updateType, update) {
+    switch (actionType) {
+      case UserAction.DELETE_COMMENT:
+        this._commentsModel.deleteComment(updateType, update);
+        break;
+      case UserAction.ADD_COMMENT:
+        this._commentsModel.addComment(updateType, update);
+        break;
+    }
+  }
+
+  // обработчик изменения модели комментариев
+  _handleModelEvent() {
+    this.init();
   }
 }

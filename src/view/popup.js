@@ -170,9 +170,9 @@ const createPopUpTemplate = (data) => {
 };
 
 export default class Popup extends SmartView {
-  constructor(filmCard) {
+  constructor(filmCard, comments) {
     super();
-    this._data = Popup.parseFilmToData(filmCard);
+    this._data = Popup.parseFilmToData(filmCard, comments);
     this._scrollPosition = 0;
 
     this._clickClosePopupHandler = this._clickClosePopupHandler.bind(this);
@@ -188,7 +188,7 @@ export default class Popup extends SmartView {
   }
 
   getTemplate() {
-    return createPopUpTemplate(this._data, this._commentsComponent);
+    return createPopUpTemplate(this._data);
   }
 
   _clickClosePopupHandler(evt) {
@@ -223,6 +223,16 @@ export default class Popup extends SmartView {
     this.callback.formSubmit(Popup.parseDataToFilm(this._data));
   }
 
+  _deleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick();
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.film-details__comment-delete`).addEventListener(`click`, this._deleteClickHandler);
+  }
+
   setClickClosePopupHandler(callback) {
     this._callback.click = callback;
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickClosePopupHandler);
@@ -253,11 +263,12 @@ export default class Popup extends SmartView {
     this.getElement().querySelector(`form`).addEventListener(`submit`, this._formSubmitHandler);
   }
 
-  static parseFilmToData(film) {
+  static parseFilmToData(film, comments) {
     return Object.assign(
         {},
         film,
         {
+          comments,
           commentEmoji: null,
           newComment: null
         }
@@ -275,8 +286,13 @@ export default class Popup extends SmartView {
       data.newComment = null;
     }
 
+    if (!data.comments) {
+      data.comments = null;
+    }
+
     delete data.commentEmoji;
     delete data.newComment;
+    delete data.comments;
 
     return data;
   }
@@ -309,6 +325,7 @@ export default class Popup extends SmartView {
 
     this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`change`, this._emojiChangeHandler);
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._commentInputHandler);
+    this.getElement().querySelector(`.film-details__comment-delete`).addEventListener(`click`, this._deleteClickHandler);
 
   }
 
@@ -318,9 +335,9 @@ export default class Popup extends SmartView {
     this.getElement().scrollTop = this._scrollPosition;
   }
 
-  reset(film) {
+  reset(film, comments) {
     this.updateData(
-        Popup.parseFilmToData(film)
+        Popup.parseFilmToData(film, comments)
     );
   }
 

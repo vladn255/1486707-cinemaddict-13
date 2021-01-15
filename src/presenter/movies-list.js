@@ -39,6 +39,7 @@ export default class MoviesList {
 
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
+    this._commentsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -174,10 +175,10 @@ export default class MoviesList {
         this._moviesModel.updateMovie(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        this._commentsModel.deleteComment();
+        this._commentsModel.deleteComment(updateType, update);
         break;
       case UserAction.ADD_COMMENT:
-        this._commentsModel.addComment();
+        this._commentsModel.addComment(updateType, update);
         break;
     }
   }
