@@ -8,7 +8,7 @@ const createFilmsSectionTemplate = () => {
   );
 };
 
-export default class FilmsWrapper extends AbstractView {
+export default class MoviesWrapper extends AbstractView {
   getTemplate() {
     return createFilmsSectionTemplate();
   }

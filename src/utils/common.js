@@ -17,9 +17,13 @@ const getShortText = (text) => {
 // сортировка по рейтингу
 const sortByRate = (movieA, movieB) => movieB.rate - movieA.rate;
 
+// сортировка по количеству комментариев
+const sortByCommentsCount = (movieA, movieB) => movieB.commentsCount - movieA.commentsCount;
+
 export {
   getRandomInteger,
   getShortText,
-  sortByRate
+  sortByRate,
+  sortByCommentsCount
 };
 

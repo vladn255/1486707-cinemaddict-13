@@ -39,11 +39,41 @@ const FilterType = {
   FAVORITES: `favorites`
 };
 
+const ListTypes = {
+  ALL_MOVIES: {
+    title: `All movies. Upcoming`,
+    isHidden: true,
+    isExtra: false
+  },
+  TOP_RATED: {
+    title: `Top rated`,
+    isHidden: false,
+    isExtra: true
+  },
+  MOST_COMMENTED: {
+    title: `Most commented`,
+    isHidden: false,
+    isExtra: true
+  },
+  EMPTY_LIST: {
+    title: `There are no movies in our database`,
+    isHidden: false,
+    isExtra: false
+  }
+};
+
+const KeyBindings = {
+  ESCAPE: `Escape`,
+  ENTER: `Enter`
+};
+
 export {
   SortType,
   FilmDetails,
   MoviesListData,
   UserAction,
   UpdateType,
-  FilterType
+  FilterType,
+  ListTypes,
+  KeyBindings
 };

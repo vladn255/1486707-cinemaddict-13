@@ -5,10 +5,6 @@ const RenderPosition = {
   AFTER_BEGIN: `afterbegin`
 };
 
-const KeyBindings = {
-  ESCAPE: `Escape`,
-  ENTER: `Enter`
-};
 
 // рендер шаблона
 const renderTemplate = (container, template, place) => {
@@ -79,7 +75,6 @@ const remove = (component) => {
 
 export {
   RenderPosition,
-  KeyBindings,
   renderTemplate,
   render,
   createElement,

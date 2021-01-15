@@ -1,6 +1,5 @@
 import {getDMYDate, getYMDHMDate} from "../utils/date-time.js";
-import {KeyBindings} from "../utils/render.js";
-import {FilmDetails} from "../utils/const.js";
+import {FilmDetails, KeyBindings} from "../utils/const.js";
 import SmartView from "./smart.js";
 
 
@@ -108,30 +107,28 @@ const createPopUpTemplate = (data) => {
                 ${createFilmDetailItemTemplate(getDMYDate(releaseDate), `releaseDate`)}
                 ${createFilmDetailItemTemplate(duration, `duration`)}
                 ${createFilmDetailItemTemplate(country, `country`)}
-                ${createFilmDetailItemTemplate(genresTemplate, `
-                ${genres.length === 1
-      ? `genre`
-      : `genres`}`)}
-
+                ${createFilmDetailItemTemplate(genresTemplate, `${
+      genres.length === 1
+        ? `genre`
+        : `genres`}`)}
+                </tr>
               </table>
 
               <p class="film-details__film-description">
-                ${description}
+                    ${description}
               </p>
             </div>
           </div>
 
           <section class="film-details__controls">
-            ${controls
-              .map(({name, modifier, isActive}) => {
-                return (`
-                    <input type="checkbox" class="film-details__control-input visually-hidden" id="${modifier}" name="${modifier}" ${isActive
-                    ? `checked`
-                    : ``}>
-                    <label for="${modifier}" class="film-details__control-label film-details__control-label--${modifier}">${name}</label>
-                `);
-              })
-            .join(``)}
+            ${controls.map(({name, modifier, isActive}) => {
+      return (`
+            <input type="checkbox" class="film-details__control-input visually-hidden" id="${modifier}" name="${modifier}" ${isActive
+          ? `checked`
+          : ``}>
+            <label for="${modifier}" class="film-details__control-label film-details__control-label--${modifier}">${name}</label>
+            `);
+    }).join(``)}
           </section>
         </div>
 
@@ -142,8 +139,7 @@ const createPopUpTemplate = (data) => {
             <ul class="film-details__comments-list">
               ${comments.map((comment) => {
       return createCommentItem(comment);
-    })
-            .join(``)}
+    }).join(``)}
             </ul>
 
             <div class="film-details__new-comment">
@@ -161,11 +157,9 @@ const createPopUpTemplate = (data) => {
               </label>
 
               <div class="film-details__emoji-list">
-                  ${emojis
-                    .map((emoji) => {
-                      return createEmojiItem(emoji);
-                    })
-                    .join(``)}
+                  ${emojis.map((emoji) => {
+      return createEmojiItem(emoji);
+    }).join(``)}
               </div>
             </div>
           </section>

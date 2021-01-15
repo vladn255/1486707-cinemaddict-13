@@ -1,20 +1,19 @@
 import AbstractView from "./abstract.js";
-import {FilterType} from "../utils/const.js";
 
 const createFilterItemTemplate = (filter, currentFilterType) => {
-  const {type, name, count, text} = filter;
+  const {type, count, text} = filter;
 
   return (
     `<a
-      href="#${name}"
+      href="#${type}"
       class="main-navigation__item ${type === currentFilterType
       ? `main-navigation__item--active`
       : ``}"
-      value="${type}"
+      value=""${type}" data-filter-type="${type}"
     >
       ${text}
 
-      ${name !== `all`
+      ${type !== `all`
       ? `<span class="main-navigation__item-count">
             ${count}
           </span>`
@@ -54,15 +53,12 @@ export default class Filters extends AbstractView {
   _filterTypeChangeHandler(evt) {
     evt.preventDefault();
 
-    this._callback.filterTypeChange(evt.target.getAttribute(`value`));
+    this._callback.filterTypeChange(evt.target.closest(`.main-navigation__item`).dataset.filterType);
   }
 
   setFilterTypeChangeHandler(callback) {
     this._callback.filterTypeChange = callback;
 
-    this.getElement().querySelector(`a[href="#${FilterType[`ALL_MOVIES`]}"]`).addEventListener(`click`, this._filterTypeChangeHandler);
-    this.getElement().querySelector(`a[href="#${FilterType[`WATCHLIST`]}"]`).addEventListener(`click`, this._filterTypeChangeHandler);
-    this.getElement().querySelector(`a[href="#${FilterType[`HISTORY`]}"]`).addEventListener(`click`, this._filterTypeChangeHandler);
-    this.getElement().querySelector(`a[href="#${FilterType[`FAVORITES`]}"]`).addEventListener(`click`, this._filterTypeChangeHandler);
+    this.getElement().querySelector(`.main-navigation__items`).addEventListener(`click`, this._filterTypeChangeHandler);
   }
 }
