@@ -30,7 +30,9 @@ export default class SortMenu extends AbstractView {
 
   _sortTypeChangeHandler(evt) {
     evt.preventDefault();
-    this._callback.sortTypeChange(evt.target.dataset.sortType);
+    if (evt.target.closest(`.sort__button`)) {
+      this._callback.sortTypeChange(evt.target.dataset.sortType);
+    }
   }
 
   setSortTypeChangeHandler(callback) {

@@ -2,6 +2,8 @@ import {getDMYDate, getYMDHMDate} from "../utils/date-time.js";
 import {FilmDetails, KeyBindings} from "../utils/const.js";
 import SmartView from "./smart.js";
 
+import he from "he";
+
 
 // создание шаблона сведения о фильме
 const createFilmDetailItemTemplate = (detail, detailName) => {
@@ -151,7 +153,7 @@ const createPopUpTemplate = (data) => {
 
               <label class="film-details__comment-label">
                 <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${newComment
-      ? `${newComment}</textarea>`
+      ? `${he.encode(newComment)}</textarea>`
       : `</textarea>`}
 
               </label>
@@ -231,12 +233,11 @@ export default class Popup extends SmartView {
   }
 
   _deleteClickHandler(evt) {
-    if (evt.target === this.getElement().querySelector(`.film-details__comment-delete`)) {
-      evt.preventDefault();
-      const deletedCommentId = evt.target.closest(`.film-details__comment-delete`).dataset.commentId;
-      const deletedComment = this._data.comments.find((comment) => comment.id === parseInt(deletedCommentId, 10));
+    evt.preventDefault();
+    if (evt.target.classList.contains(`film-details__comment-delete`)) {
+      const deletedCommentId = evt.target.dataset.commentId;
 
-      this._callback.deleteClick(deletedComment);
+      this._callback.deleteClick(deletedCommentId);
     }
   }
 
@@ -340,9 +341,9 @@ export default class Popup extends SmartView {
     this.getElement().scrollTop = this._scrollPosition;
   }
 
-  reset(film, comments) {
+  reset(movie, comments) {
     this.updateData(
-        Popup.parseFilmToData(film, comments)
+        Popup.parseFilmToData(movie, comments)
     );
   }
 

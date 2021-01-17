@@ -25,9 +25,11 @@ export default class Movie {
     this._popupView = null;
     this._filmCardClickHandler = this._filmCardClickHandler.bind(this);
     this._closePopupHandler = this._closePopupHandler.bind(this);
+
     this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
     this._handleHistoryClick = this._handleHistoryClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._handleCommentsViewAction = this._handleCommentsViewAction.bind(this);
     this._handleCommentsModelEvent = this._handleCommentsModelEvent.bind(this);
@@ -36,11 +38,11 @@ export default class Movie {
 
   init(movie) {
     this._movie = movie;
-    this._comments = null;
+    this._comments = this._commentsModel.getComments();
     const prevMovieView = this._movieCardView;
     const prevPopupView = this._popupView;
 
-    this._movieCardView = new MovieCardView(this._movie);
+    this._movieCardView = new MovieCardView(this._movie, this._comments);
 
     this._movieCardView.setFilmCardClickHandler(this._filmCardClickHandler);
 
@@ -92,8 +94,6 @@ export default class Movie {
   _showPopup() {
     document.body.classList.add(`hide-overflow`);
 
-    this._comments = this._commentsModel.getComments();
-
     this._popupView = new PopupView(this._movie, this._comments);
 
     this._popupView.setClickClosePopupHandler(this._closePopupHandler);
@@ -124,32 +124,49 @@ export default class Movie {
     this._closePopup();
   }
 
-  // обработчик нажатия на кнопку "Add to watchlist"
-  _handleWatchlistClick() {
+  // изменения состояния "add to watchlist"
+  _changeWatchlistStatus() {
     this._changeData(
         UserAction.UPDATE_MOVIE,
-        UpdateType.PATCH,
+        UpdateType.MINOR,
         Object.assign({}, this._movie, {isToWatch: !this._movie.isToWatch}));
+  }
+
+  // изменения состояния "Mark as watched"
+  _changeHistoryStatus() {
+    this._changeData(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.MINOR,
+        Object.assign({}, this._movie, {isAlreadyWatched: !this._movie.isAlreadyWatched}));
+  }
+
+  // изменение состояния "Mark as favorite"
+  _changeFavoriteStatus() {
+    this._changeData(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.MINOR,
+        Object.assign({}, this._movie, {isInFavorites: !this._movie.isInFavorites}));
+  }
+
+  // обработчик нажатия на кнопку "Add to watchlist"
+  _handleWatchlistClick() {
+    this._changeWatchlistStatus();
   }
 
   // обработчик нажатия на кнопку "Mark as watched"
   _handleHistoryClick() {
-    this._changeData(
-        UserAction.UPDATE_MOVIE,
-        UpdateType.PATCH,
-        Object.assign({}, this._movie, {isAlreadyWatched: !this._movie.isAlreadyWatched}));
+    this._changeHistoryStatus();
   }
 
   // обработчик нажатия на кнопку "Mark as favorite"
   _handleFavoriteClick() {
-    this._changeData(
-        UserAction.UPDATE_MOVIE,
-        UpdateType.PATCH,
-        Object.assign({}, this._movie, {isInFavorites: !this._movie.isInFavorites}));
+    this._changeFavoriteStatus();
   }
 
+
   // обработчик удаления комментария
-  _handleDeleteClick(deletedComment) {
+  _handleDeleteClick(deletedCommentId) {
+    const deletedComment = this._comments.find((comment) => comment.id === parseInt(deletedCommentId, 10));
     this._handleCommentsViewAction(
         UserAction.DELETE_COMMENT,
         UpdateType.PATCH,
@@ -183,7 +200,7 @@ export default class Movie {
     switch (updateType) {
       case UpdateType.PATCH:
         this._closePopup();
-        this._comments = this._commentsModel.getComments();
+        this.init(this._movie);
         this._showPopup();
         break;
     }
