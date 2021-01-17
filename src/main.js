@@ -10,23 +10,16 @@ import FilterModel from "./model/filter.js";
 import CommentsModel from "./model/comments.js";
 
 import {generateFilmCard} from "./mock/film-data.js";
-import {generateComment} from "./mock/comment.js";
+
 
 import MoviesListPresenter from "./presenter/movies-list.js";
 import FilterPresenter from "./presenter/filter";
 
 const FILMS_MOCK_COUNT = 17;
 
-const COMMENTS_QUANTITY = 3;
-
 const films = new Array(FILMS_MOCK_COUNT).fill().map(generateFilmCard);
 
 const filmsNumber = getRandomInteger(0, 100000);
-
-const comments = [];
-for (let j = 0; j < COMMENTS_QUANTITY; j++) {
-  comments.push(generateComment());
-}
 
 const moviesModel = new MoviesModel();
 moviesModel.setMovies(films);
@@ -34,7 +27,6 @@ moviesModel.setMovies(films);
 const filterModel = new FilterModel();
 
 const commentsModel = new CommentsModel();
-commentsModel.setComments(comments);
 
 const siteHeaderElement = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);

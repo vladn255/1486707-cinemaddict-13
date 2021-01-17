@@ -1,7 +1,8 @@
 const SortType = {
   DEFAULT: `default`,
   BY_DATE: `by-date`,
-  BY_RATE: `by-rate`
+  BY_RATE: `by-rate`,
+  BY_COMMENTS: `by-comments`
 };
 
 const FilmDetails = {
@@ -65,7 +66,8 @@ const ListTypes = {
 
 const KeyBindings = {
   ESCAPE: `Escape`,
-  ENTER: `Enter`
+  ENTER: `Enter`,
+  CONTROL: `Control`
 };
 
 export {

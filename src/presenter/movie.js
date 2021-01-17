@@ -1,13 +1,23 @@
 import {RenderPosition, render, replace, remove} from "../utils/render.js";
 import {UserAction, UpdateType} from "../utils/const.js";
 
+import {generateComment} from "../mock/comment.js";
+
 import MovieCardView from "../view/movie-card.js";
 import PopupView from "../view/popup.js";
+
+const COMMENTS_QUANTITY = 3;
+
+const comments = [];
+for (let j = 0; j < COMMENTS_QUANTITY; j++) {
+  comments.push(generateComment());
+}
 
 export default class Movie {
   constructor(container, changeData, commentsModel) {
     this._container = container;
     this._commentsModel = commentsModel;
+    this._commentsModel.setComments(comments);
 
     this._changeData = changeData;
 
@@ -18,13 +28,15 @@ export default class Movie {
     this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
     this._handleHistoryClick = this._handleHistoryClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
-
-    this._commentsModel.addObserver(this._handleModelEvent);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
+    this._handleCommentsViewAction = this._handleCommentsViewAction.bind(this);
+    this._handleCommentsModelEvent = this._handleCommentsModelEvent.bind(this);
+    this._handleAddComment = this._handleAddComment.bind(this);
   }
 
   init(movie) {
     this._movie = movie;
-    this._comments = this._getComments();
+    this._comments = null;
     const prevMovieView = this._movieCardView;
     const prevPopupView = this._popupView;
 
@@ -35,7 +47,6 @@ export default class Movie {
     this._movieCardView.setWatchlistClickHandler(this._handleWatchlistClick);
     this._movieCardView.setHistoryClickHandler(this._handleHistoryClick);
     this._movieCardView.setFavoriteClickHandler(this._handleFavoriteClick);
-
 
     if (prevMovieView === null) {
       this._renderMovieCard();
@@ -80,6 +91,9 @@ export default class Movie {
   // показ попапа
   _showPopup() {
     document.body.classList.add(`hide-overflow`);
+
+    this._comments = this._commentsModel.getComments();
+
     this._popupView = new PopupView(this._movie, this._comments);
 
     this._popupView.setClickClosePopupHandler(this._closePopupHandler);
@@ -90,15 +104,19 @@ export default class Movie {
     this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
 
     this._popupView.setDeleteClickHandler(this._handleDeleteClick);
+    this._popupView.setFormSubmitHandler(this._handleAddComment);
 
-    document.body.appendChild(this._popupView.getElement());
+    render(document.body, this._popupView.getElement(), RenderPosition.BEFORE_END);
+
+    this._commentsModel.addObserver(this._handleCommentsModelEvent);
   }
 
   // скрытие попапа
   _closePopup() {
     document.body.classList.remove(`hide-overflow`);
     this._popupView.reset(this._movie, this._comments);
-    this._popupView.getElement().remove();
+    this._commentsModel.removeObserver(this._handleCommentsModelEvent);
+    remove(this._popupView);
   }
 
   // обработчик закрытия попапа
@@ -131,16 +149,25 @@ export default class Movie {
   }
 
   // обработчик удаления комментария
-  _handleDeleteClick() {
-    this._changeData(
+  _handleDeleteClick(deletedComment) {
+    this._handleCommentsViewAction(
         UserAction.DELETE_COMMENT,
-        UpdateType.PATCH
+        UpdateType.PATCH,
+        Object.assign({}, deletedComment)
+    );
+  }
 
+  // обработчик добавления комментария
+  _handleAddComment(newComment) {
+    this._handleCommentsViewAction(
+        UserAction.ADD_COMMENT,
+        UpdateType.PATCH,
+        Object.assign({}, newComment)
     );
   }
 
   // обработчик изменения представления
-  _handleViewAction(actionType, updateType, update) {
+  _handleCommentsViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.DELETE_COMMENT:
         this._commentsModel.deleteComment(updateType, update);
@@ -152,7 +179,13 @@ export default class Movie {
   }
 
   // обработчик изменения модели комментариев
-  _handleModelEvent() {
-    this.init();
+  _handleCommentsModelEvent(updateType) {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this._closePopup();
+        this._comments = this._commentsModel.getComments();
+        this._showPopup();
+        break;
+    }
   }
 }

@@ -24,6 +24,7 @@ export default class Comments extends Observer {
   }
 
   deleteComment(updateType, update) {
+
     const index = this._comments.findIndex((comment) => comment.id === update.id);
 
     if (index === -1) {

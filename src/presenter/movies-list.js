@@ -28,9 +28,11 @@ export default class MoviesList {
     this._allMoviesContainer = null;
     this._topRatedContainer = null;
     this._mostCommentedContainer = null;
+    this._allMoviesListComponent = null;
+    this._topRatedListComponent = null;
+    this._topCommentedListComponent = null;
     this._moviePresenter = {};
     this._moviesList = [];
-    this._moviesContainerList = [];
 
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
@@ -39,7 +41,6 @@ export default class MoviesList {
 
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
-    this._commentsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -48,16 +49,18 @@ export default class MoviesList {
   }
 
   // получение списка фильмов
-  _getMovies() {
+  _getMovies(sortButton = this._currentSortButton) {
     const filterType = this._filterModel.getFilter();
     const movies = this._moviesModel.getMovies();
     const filtredMovies = filter[filterType](movies);
 
-    switch (this._currentSortButton) {
+    switch (sortButton) {
       case SortType.BY_DATE:
         return filtredMovies.slice().sort(sortByDate);
       case SortType.BY_RATE:
         return filtredMovies.slice().sort(sortByRate);
+      case SortType.BY_COMMENTS:
+        return filtredMovies.slice().sort(sortByCommentsCount);
     }
 
     return filtredMovies;
@@ -65,8 +68,8 @@ export default class MoviesList {
 
   // рендер контейнера для списков фильмов
   _renderContainer() {
-    if (this._moviesWrapperComponent) {
-      remove(this._moviesWrapperComponent);
+    if (this._moviesWrapperComponent !== null) {
+      this._moviesWrapperComponent = null;
     }
     this._moviesWrapperComponent = new MoviesWrapperView();
     render(this._container, this._moviesWrapperComponent, RenderPosition.BEFORE_END);
@@ -83,8 +86,8 @@ export default class MoviesList {
   }
 
   // рендер списка карточек фильма
-  _renderMovieCards(container, moviesList, cardsCount) {
-    moviesList.slice(0, cardsCount).forEach((movie) => this._renderMovieCard(container, movie));
+  _renderMovieCards(container, moviesList) {
+    moviesList.forEach((movie) => this._renderMovieCard(container, movie));
     this._moviesList.push(this._moviePresenter);
     this._moviePresenter = {};
   }
@@ -99,13 +102,12 @@ export default class MoviesList {
 
   // рендер основного списка фильмов "All Movies"
   _renderAllMoviesList() {
-    const moviesListComponent = new MoviesListView(ListTypes.ALL_MOVIES);
-    this._allMoviesContainer = moviesListComponent.getElement();
-    this._moviesContainerList.push(moviesListComponent);
+    this._allMoviesListComponent = new MoviesListView(ListTypes.ALL_MOVIES);
+    this._allMoviesContainer = this._allMoviesListComponent.getElement().querySelector(`.films-list__container`);
 
-    this._renderMovieCards(this._allMoviesContainer.querySelector(`.films-list__container`), this._getMovies(), this._renderedMoviesCount);
+    this._renderMovieCards(this._allMoviesContainer, this._getMovies().slice(0, this._renderedMoviesCount));
 
-    render(this._moviesElement, moviesListComponent, RenderPosition.BEFORE_END);
+    render(this._moviesElement, this._allMoviesListComponent, RenderPosition.BEFORE_END);
 
     if (this._getMovies().length > MoviesListData.CARDS_MAIN_QUANTITY) {
       this._renderShowMoreButton();
@@ -114,26 +116,25 @@ export default class MoviesList {
 
   // рендер дополнительного списка фильмов "Top Rated"
   _renderTopRated() {
-    const moviesListComponent = new MoviesListView(ListTypes.TOP_RATED);
-    this._topRatedContainer = moviesListComponent.getElement();
-    this._moviesContainerList.push(moviesListComponent);
+    this._topRatedListComponent = new MoviesListView(ListTypes.TOP_RATED);
+    this._topRatedContainer = this._topRatedListComponent.getElement();
     const topRatedMoviesCount = Math.min(this._getMovies().length, MoviesListData.CARDS_EXTRA_QUANTITY);
 
-    this._renderMovieCards(this._topRatedContainer.querySelector(`.films-list__container`), this._getMovies().slice().sort(sortByRate), topRatedMoviesCount);
+    this._renderMovieCards(this._topRatedContainer.querySelector(`.films-list__container`), this._getMovies(SortType.BY_RATE), topRatedMoviesCount);
 
-    render(this._moviesElement, moviesListComponent, RenderPosition.BEFORE_END);
+    render(this._moviesElement, this._topRatedListComponent, RenderPosition.BEFORE_END);
   }
 
   // рендер дополнительного списка фильмов "Most Commented"
   _renderMostCommented() {
-    const moviesListComponent = new MoviesListView(ListTypes.MOST_COMMENTED);
-    this._mostCommentedContainer = moviesListComponent.getElement();
-    this._moviesContainerList.push(moviesListComponent);
+    this._topCommentedListComponent = new MoviesListView(ListTypes.MOST_COMMENTED);
+    this._mostCommentedContainer = this._topCommentedListComponent.getElement();
+
     const mostCommentedCount = Math.min(this._getMovies().length, MoviesListData.CARDS_EXTRA_QUANTITY);
 
-    this._renderMovieCards(this._mostCommentedContainer.querySelector(`.films-list__container`), this._getMovies().slice().sort(sortByCommentsCount), mostCommentedCount);
+    this._renderMovieCards(this._mostCommentedContainer.querySelector(`.films-list__container`), this._getMovies(SortType.BY_COMMENTS), mostCommentedCount);
 
-    render(this._moviesElement, moviesListComponent, RenderPosition.BEFORE_END);
+    render(this._moviesElement, this._topCommentedListComponent, RenderPosition.BEFORE_END);
   }
 
   // рендер основного и дополнительных списков фильмов
@@ -162,10 +163,13 @@ export default class MoviesList {
     });
     this._moviesList = [];
 
-    this._moviesContainerList.forEach((movieContainer) => {
-      remove(movieContainer);
-    });
-    this._moviesContainerList = [];
+    remove(this._allMoviesListComponent);
+    remove(this._topRatedListComponent);
+    remove(this._topCommentedListComponent);
+
+    this._allMoviesListComponent = null;
+    this._topRatedListComponent = null;
+    this._topCommentedListComponent = null;
   }
 
   // обработчик изменения представления
@@ -200,7 +204,7 @@ export default class MoviesList {
         break;
 
       case UpdateType.MAJOR:
-        this._clearMoviesContainer(true, true);
+        this._clearMoviesContainer({resetRenderedMoviesCount: false, resetSortType: false});
         this._renderMainMoviesLists();
         break;
     }
@@ -213,7 +217,7 @@ export default class MoviesList {
     }
     this._showMoreButtonComponent = new ShowMoreButtonView();
 
-    render(this._allMoviesContainer, this._showMoreButtonComponent, RenderPosition.BEFORE_END);
+    render(this._allMoviesListComponent, this._showMoreButtonComponent, RenderPosition.BEFORE_END);
 
     this._showMoreButtonComponent.setShowMoreButtonClickHandler(this._handleShowMoreButtonClick);
 
@@ -226,7 +230,7 @@ export default class MoviesList {
     const movies = this._getMovies().slice(this._renderedMoviesCount, this._renderedMoviesCount + MoviesListData.CARDS_MAIN_QUANTITY);
 
     this._renderMovieCards(
-        this._allMoviesContainer.querySelector(`.films-list__container`),
+        this._allMoviesContainer,
         movies,
         MoviesListData.CARDS_MAIN_QUANTITY);
 
@@ -243,9 +247,8 @@ export default class MoviesList {
       return;
     }
 
-    this._renderedMoviesCount = MoviesListData.CARDS_MAIN_QUANTITY;
     this._currentSortButton = sortType;
-    this._clearMoviesList();
+    this._clearMoviesContainer({resetRenderedMoviesCount: true});
     this._renderMoviesLists();
   }
 
@@ -262,15 +265,12 @@ export default class MoviesList {
 
   // стирание контейнера фильмов и сортировки
   _clearMoviesContainer({resetRenderedMoviesCount = false, resetSortType = false} = {}) {
-    const moviesCount = this._getMovies().length;
 
     remove(this._sortMenuComponent);
     this._clearMoviesList();
 
     if (resetRenderedMoviesCount) {
       this._renderedMoviesCount = MoviesListData.CARDS_MAIN_QUANTITY;
-    } else {
-      this._renderedMoviesCount = Math.min(moviesCount, this._renderedMoviesCount);
     }
 
     if (resetSortType) {
