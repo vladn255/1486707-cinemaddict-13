@@ -64,4 +64,4 @@ const generateComment = () => {
   };
 };
 
-export {generateComment};
+export {generateComment, generateName};

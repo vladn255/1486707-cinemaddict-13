@@ -4,6 +4,8 @@ import SmartView from "./smart.js";
 
 import he from "he";
 
+import {generateName} from "../mock/comment.js";
+
 
 // создание шаблона сведения о фильме
 const createFilmDetailItemTemplate = (detail, detailName) => {
@@ -179,9 +181,7 @@ export default class Popup extends SmartView {
 
     this._clickClosePopupHandler = this._clickClosePopupHandler.bind(this);
     this._escPressClosePopupHandler = this._escPressClosePopupHandler.bind(this);
-    this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
-    this._historyClickHandler = this._historyClickHandler.bind(this);
-    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._controlsChangeHandler = this._controlsChangeHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
     this._commentInputHandler = this._commentInputHandler.bind(this);
@@ -206,24 +206,25 @@ export default class Popup extends SmartView {
     }
   }
 
-  _watchlistClickHandler(evt) {
+  _controlsChangeHandler(evt) {
     evt.preventDefault();
-    this._callback.watchlistClick();
-  }
-
-  _historyClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.historyClick();
-  }
-
-  _favoriteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.favoriteClick();
+    this._scrollPosition = this.getElement().scrollTop;
+    switch (evt.target) {
+      case this.getElement().querySelector(`input[id="watchlist"]`):
+        this._callback.watchlistClick();
+        break;
+      case this.getElement().querySelector(`input[id="watched"]`):
+        this._callback.historyClick();
+        break;
+      case this.getElement().querySelector(`input[id="favorite"]`):
+        this._callback.favoriteClick();
+    }
   }
 
   _formSubmitHandler(evt) {
     if (evt.ctrlKey && evt.key === KeyBindings.ENTER) {
       evt.preventDefault();
+      this._scrollPosition = this.getElement().scrollTop;
       const newComment = Popup.parseDataToLocalComment(this._data);
 
       if (newComment) {
@@ -234,7 +235,8 @@ export default class Popup extends SmartView {
 
   _deleteClickHandler(evt) {
     evt.preventDefault();
-    if (evt.target.classList.contains(`film-details__comment-delete`)) {
+    this._scrollPosition = this.getElement().scrollTop;
+    if (evt.target.closest(`.film-details__comment-delete`)) {
       const deletedCommentId = evt.target.dataset.commentId;
 
       this._callback.deleteClick(deletedCommentId);
@@ -243,7 +245,7 @@ export default class Popup extends SmartView {
 
   setDeleteClickHandler(callback) {
     this._callback.deleteClick = callback;
-    this.getElement().querySelector(`.film-details__comment-delete`).addEventListener(`click`, this._deleteClickHandler);
+    this.getElement().querySelector(`.film-details__comments-list`).addEventListener(`click`, this._deleteClickHandler);
   }
 
   setClickClosePopupHandler(callback) {
@@ -258,22 +260,19 @@ export default class Popup extends SmartView {
 
   setWatchlistClickHandler(callback) {
     this._callback.watchlistClick = callback;
-    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._watchlistClickHandler);
   }
 
   setHistoryClickHandler(callback) {
     this._callback.historyClick = callback;
-    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._historyClickHandler);
   }
 
   setFavoriteClickHandler(callback) {
     this._callback.favoriteClick = callback;
-    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._favoriteClickHandler);
   }
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
-    this.getElement().querySelector(`form`).addEventListener(`submit`, this._formSubmitHandler);
+    document.addEventListener(`keydown`, this._formSubmitHandler);
   }
 
   static parseFilmToData(film, comments) {
@@ -299,6 +298,8 @@ export default class Popup extends SmartView {
       localComment.text = data.newComment;
     }
 
+    localComment.author = generateName();
+
     return localComment;
   }
 
@@ -320,19 +321,9 @@ export default class Popup extends SmartView {
   }
 
   _setInnerHandlers() {
-    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickClosePopupHandler);
-    document.addEventListener(`keydown`, this._escPressClosePopupHandler);
-
-    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._watchlistClickHandler);
-    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._historyClickHandler);
-    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._favoriteClickHandler);
-    document.addEventListener(`keydown`, this._formSubmitHandler);
-
     this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`change`, this._emojiChangeHandler);
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._commentInputHandler);
-
-    this.getElement().querySelector(`.film-details__comments-list`).addEventListener(`click`, this._deleteClickHandler);
-
+    this.getElement().querySelector(`.film-details__controls`).addEventListener(`change`, this._controlsChangeHandler);
   }
 
   restoreHandlers() {

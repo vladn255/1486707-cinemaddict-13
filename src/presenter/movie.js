@@ -69,15 +69,9 @@ export default class Movie {
     remove(prevMovieView);
   }
 
-  // получение списка комментариев
-  _getComments() {
-    return this._commentsModel.getComments();
-  }
-
   // удаление карточки
   destroy() {
     remove(this._movieCardView);
-    remove(this._popupView);
   }
 
   // обработчик клика на карточку фильма
@@ -163,24 +157,24 @@ export default class Movie {
     this._changeFavoriteStatus();
   }
 
-
   // обработчик удаления комментария
   _handleDeleteClick(deletedCommentId) {
-    const deletedComment = this._comments.find((comment) => comment.id === parseInt(deletedCommentId, 10));
     this._handleCommentsViewAction(
         UserAction.DELETE_COMMENT,
         UpdateType.PATCH,
-        Object.assign({}, deletedComment)
+        parseInt(deletedCommentId, 10)
     );
   }
 
   // обработчик добавления комментария
   _handleAddComment(newComment) {
-    this._handleCommentsViewAction(
-        UserAction.ADD_COMMENT,
-        UpdateType.PATCH,
-        Object.assign({}, newComment)
-    );
+    if (newComment.emoji && newComment.text) {
+      this._handleCommentsViewAction(
+          UserAction.ADD_COMMENT,
+          UpdateType.PATCH,
+          Object.assign({}, newComment)
+      );
+    }
   }
 
   // обработчик изменения представления

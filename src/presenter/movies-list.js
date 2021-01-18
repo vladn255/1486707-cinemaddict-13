@@ -79,7 +79,6 @@ export default class MoviesList {
 
   // рендер карточки фильма
   _renderMovieCard(container, movie) {
-
     const moviePresenter = new MoviePresenter(container, this._handleViewAction, this._commentsModel);
     moviePresenter.init(movie);
     this._moviePresenter[movie.id] = moviePresenter;
