@@ -5,10 +5,6 @@ const RenderPosition = {
   AFTER_BEGIN: `afterbegin`
 };
 
-const KeyBindings = {
-  ESCAPE: `Escape`,
-  ENTER: `Enter`
-};
 
 // рендер шаблона
 const renderTemplate = (container, template, place) => {
@@ -67,6 +63,9 @@ const replace = (newChild, oldChild) => {
 
 // удаление компонента
 const remove = (component) => {
+  if (component === null) {
+    return;
+  }
   if (!(component instanceof Abstract)) {
     throw new Error(`Can remove only components`);
   }
@@ -76,7 +75,6 @@ const remove = (component) => {
 
 export {
   RenderPosition,
-  KeyBindings,
   renderTemplate,
   render,
   createElement,

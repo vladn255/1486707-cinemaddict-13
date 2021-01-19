@@ -14,10 +14,10 @@ const CommentData = {
     `In rutrum ac purus sit amet tempus.`
   ],
   EMOJIS: [
-    `./images/emoji/angry.png`,
-    `./images/emoji/puke.png`,
-    `./images/emoji/sleeping.png`,
-    `./images/emoji/smile.png`,
+    `angry`,
+    `puke`,
+    `sleeping`,
+    `smile`,
   ],
   RANDOM_NAMES: [
     `Vasiliy`,
@@ -49,6 +49,9 @@ const generateDate = () => {
   return postDate;
 };
 
+// генерация id комментарий
+const generateId = () => Date.now() + parseInt(Math.random() * 1000, 10);
+
 // генерация случайного комментария
 const generateComment = () => {
 
@@ -56,8 +59,9 @@ const generateComment = () => {
     emoji: generateEmoji(),
     text: generateText(),
     author: generateName(),
-    date: generateDate()
+    date: generateDate(),
+    id: generateId()
   };
 };
 
-export {generateComment};
+export {generateComment, generateName};

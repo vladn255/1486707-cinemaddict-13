@@ -21,7 +21,7 @@ const createFilmsListTemplate = (listType) => {
 };
 
 
-export default class FilmsList extends Abstract {
+export default class MoviesList extends Abstract {
   constructor(listType) {
     super();
     this._element = null;

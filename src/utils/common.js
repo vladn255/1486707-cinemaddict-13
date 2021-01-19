@@ -14,28 +14,16 @@ const getShortText = (text) => {
     : text;
 };
 
-// обновление данных
-const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1)
-  ];
-};
-
 // сортировка по рейтингу
 const sortByRate = (movieA, movieB) => movieB.rate - movieA.rate;
+
+// сортировка по количеству комментариев
+const sortByCommentsCount = (movieA, movieB) => movieB.commentsCount - movieA.commentsCount;
 
 export {
   getRandomInteger,
   getShortText,
-  updateItem,
-  sortByRate
+  sortByRate,
+  sortByCommentsCount
 };
 
