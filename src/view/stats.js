@@ -1,6 +1,105 @@
-import AbstractView from "./abstract.js";
+import SmartView from "./abstract.js";
+// import Chart from "chart.js";
+// import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-const createUserStatsTemplate = () => {
+import {filter} from "../utils/filter.js";
+import {FilterType} from "../utils/const.js";
+import {sortByGenresCount, getGenresCountsInMovies} from "../utils/statistics.js";
+
+const MINUTES_IN_HOUR = 60;
+
+const getMoviesWatchedCount = (movies) => {
+  return filter[FilterType.WATCHLIST](movies).length;
+};
+
+const getMoviesWatchedDuration = (movies) => {
+  return movies.reduce((totalDuration, currentMovie) => {
+    return currentMovie.isAlreadyWatched
+      ? totalDuration + currentMovie.duration
+      : totalDuration;
+  }, 0);
+};
+
+const getSortedGenreList = (movies) => {
+  const unsortedGenresList = getGenresCountsInMovies(movies);
+  return unsortedGenresList.sort(sortByGenresCount);
+};
+
+const getMostWatchedGenre = (genresList) => {
+  return genresList[0].genreName;
+};
+
+// const renderStatsChart = (movies) => {
+//   const BAR_HEIGHT = 50;
+//   const statisticCtx = document.querySelector(`.statistic__chart`);
+
+//   // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
+//   statisticCtx.height = BAR_HEIGHT * 5;
+
+//   return new Chart(statisticCtx, {
+//     plugins: [ChartDataLabels],
+//     type: `horizontalBar`,
+//     data: {
+//       labels: [`Sci-Fi`, `Animation`, `Fantasy`, `Comedy`, `TV Series`],
+//       datasets: [{
+//         data: [11, 8, 7, 4, 3],
+//         backgroundColor: `#ffe800`,
+//         hoverBackgroundColor: `#ffe800`,
+//         anchor: `start`
+//       }]
+//     },
+//     options: {
+//       plugins: {
+//         datalabels: {
+//           font: {
+//             size: 20
+//           },
+//           color: `#ffffff`,
+//           anchor: `start`,
+//           align: `start`,
+//           offset: 40,
+//         }
+//       },
+//       scales: {
+//         yAxes: [{
+//           ticks: {
+//             fontColor: `#ffffff`,
+//             padding: 100,
+//             fontSize: 20
+//           },
+//           gridLines: {
+//             display: false,
+//             drawBorder: false
+//           },
+//           barThickness: 24
+//         }],
+//         xAxes: [{
+//           ticks: {
+//             display: false,
+//             beginAtZero: true
+//           },
+//           gridLines: {
+//             display: false,
+//             drawBorder: false
+//           },
+//         }],
+//       },
+//       legend: {
+//         display: false
+//       },
+//       tooltips: {
+//         enabled: false
+//       }
+//     }
+//   });
+// };
+
+const createUserStatsTemplate = (movies) => {
+  const totalDurationHours = Math.floor(getMoviesWatchedDuration(movies) / MINUTES_IN_HOUR);
+  const totalDurationMinutes = getMoviesWatchedDuration(movies) % MINUTES_IN_HOUR;
+  const genresList = getSortedGenreList(movies);
+  const mostWatchedGenre = getMostWatchedGenre(genresList);
+
   return (
     `<section class="statistic">
       <p class="statistic__rank">
@@ -31,15 +130,15 @@ const createUserStatsTemplate = () => {
       <ul class="statistic__text-list">
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">You watched</h4>
-          <p class="statistic__item-text">22 <span class="statistic__item-description">movies</span></p>
+          <p class="statistic__item-text">${getMoviesWatchedCount(movies)} <span class="statistic__item-description">movies</span></p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Total duration</h4>
-          <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+          <p class="statistic__item-text"> ${totalDurationHours} <span class="statistic__item-description">h</span> ${totalDurationMinutes} <span class="statistic__item-description">m</span></p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Top genre</h4>
-          <p class="statistic__item-text">Sci-Fi</p>
+          <p class="statistic__item-text">${mostWatchedGenre}</p>
         </li>
       </ul>
 
@@ -51,8 +150,12 @@ const createUserStatsTemplate = () => {
   );
 };
 
-export default class Stats extends AbstractView {
+export default class Stats extends SmartView {
+  constructor(movies) {
+    super();
+    this._movies = movies;
+  }
   getTemplate() {
-    return createUserStatsTemplate();
+    return createUserStatsTemplate(this._movies);
   }
 }

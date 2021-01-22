@@ -1,5 +1,4 @@
 import {getRandomInteger} from "../utils/common.js";
-import {turnMinutesToHours} from "../utils/date-time.js";
 
 const FilmData = {
   RANDOM_SENTENCES: [
@@ -32,7 +31,9 @@ const FilmData = {
     `drama`,
     `thriller`,
     `action`,
-    `biopic`
+    `biopic`,
+    `animation`,
+    `horror`
   ],
   DIRECTORS: [
     `Scott Cooper`,
@@ -99,7 +100,7 @@ const generateReleaseDate = () => {
 
 // генерация длительности
 const generateDuration = () => {
-  return turnMinutesToHours(getRandomInteger(1, 210));
+  return getRandomInteger(1, 210);
 };
 
 // генерация имени директора

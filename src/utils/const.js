@@ -31,14 +31,16 @@ const UserAction = {
 const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
-  MAJOR: `MAJOR`
+  MAJOR: `MAJOR`,
+  STATS: `stats`
 };
 
 const FilterType = {
   ALL_MOVIES: `all`,
   WATCHLIST: `watchlist`,
   HISTORY: `history`,
-  FAVORITES: `favorites`
+  FAVORITES: `favorites`,
+  STATS: `stats`
 };
 
 const ListTypes = {
@@ -69,6 +71,7 @@ const KeyBindings = {
   ENTER: `Enter`,
   CONTROL: `Control`
 };
+
 
 export {
   SortType,

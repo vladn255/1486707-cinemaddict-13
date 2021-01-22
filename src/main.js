@@ -39,11 +39,13 @@ render(siteHeaderElement, new UserRankView(), RenderPosition.BEFORE_END);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, moviesModel);
 filterPresenter.init();
 
+// рендер списков фильмов
 const moviesList = new MoviesListPresenter(siteMainElement, moviesModel, filterModel, commentsModel);
 moviesList.init();
 
 // // рендер статистики пользователя в main
-// render(siteMainElement, new StatsView(), RenderPosition.BEFORE_END);
+// const statsView = new StatsView(moviesModel.getMovies());
+// render(siteMainElement, statsView, RenderPosition.BEFORE_END);
 
 // рендер блока статистики в  footer'е
 const footerStatisticsElement = siteFooterElement.querySelector(`.footer__statistics`);

@@ -5,16 +5,18 @@ import {filter} from "../utils/filter.js";
 import FiltersView from "../view/filters.js";
 
 export default class Filter {
-  constructor(filterContainer, filterModel, moviesModel) {
+  constructor(filterContainer, filterModel, moviesModel, currentMenuItem) {
     this._filterContainer = filterContainer;
     this._filterModel = filterModel;
     this._moviesModel = moviesModel;
+    this._currentMenuItem = currentMenuItem;
     this._currentFilter = null;
 
     this._filterComponent = null;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
+    this._handleStatsClick = this._handleStatsClick.bind(this);
 
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
@@ -28,6 +30,8 @@ export default class Filter {
 
     this._filterComponent = new FiltersView(filters, this._currentFilter);
     this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+    this._filterComponent.setStatsClickHandler(this._handleStatsClick);
+    this._filterComponent.setInnerHandlers();
 
     if (prevFilterComponent === null) {
       render(this._filterContainer, this._filterComponent, RenderPosition.BEFORE_END);
@@ -46,9 +50,14 @@ export default class Filter {
     if (this._currentFilter === filterType) {
       return;
     }
-
     this._filterModel.setFilter(UpdateType.MAJOR, filterType);
+  }
 
+  _handleStatsClick(filterType) {
+    if (this._currentFilter === filterType) {
+      return;
+    }
+    this._filterModel.setFilter(UpdateType.STATS, filterType);
   }
 
   _getFilters() {
@@ -74,7 +83,12 @@ export default class Filter {
         type: FilterType.FAVORITES,
         count: filter[FilterType.FAVORITES](movies).length,
         text: `Favorites`
+      },
+      {
+        type: FilterType.STATS,
+        text: `Stats`
       }
     ];
   }
+
 }

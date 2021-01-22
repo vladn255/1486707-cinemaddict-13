@@ -1,4 +1,4 @@
-import {getDMYDate, getYMDHMDate} from "../utils/date-time.js";
+import {getDMYDate, getYMDHMDate, turnMinutesToHours} from "../utils/date-time.js";
 import {FilmDetails, KeyBindings} from "../utils/const.js";
 import SmartView from "./smart.js";
 
@@ -109,7 +109,7 @@ const createPopUpTemplate = (data) => {
                 ${createFilmDetailItemTemplate(screenwriters, `screenwriters`)}
                 ${createFilmDetailItemTemplate(cast, `cast`)}
                 ${createFilmDetailItemTemplate(getDMYDate(releaseDate), `releaseDate`)}
-                ${createFilmDetailItemTemplate(duration, `duration`)}
+                ${createFilmDetailItemTemplate(turnMinutesToHours(duration), `duration`)}
                 ${createFilmDetailItemTemplate(country, `country`)}
                 ${createFilmDetailItemTemplate(genresTemplate, `${
       genres.length === 1
@@ -209,14 +209,14 @@ export default class Popup extends SmartView {
   _controlsChangeHandler(evt) {
     evt.preventDefault();
     this._scrollPosition = this.getElement().scrollTop;
-    switch (evt.target) {
-      case this.getElement().querySelector(`input[id="watchlist"]`):
+    switch (evt.target.id) {
+      case `watchlist`:
         this._callback.watchlistClick();
         break;
-      case this.getElement().querySelector(`input[id="watched"]`):
+      case `watched`:
         this._callback.historyClick();
         break;
-      case this.getElement().querySelector(`input[id="favorite"]`):
+      case `favorite`:
         this._callback.favoriteClick();
     }
   }
@@ -238,24 +238,20 @@ export default class Popup extends SmartView {
     this._scrollPosition = this.getElement().scrollTop;
     if (evt.target.closest(`.film-details__comment-delete`)) {
       const deletedCommentId = evt.target.dataset.commentId;
-
       this._callback.deleteClick(deletedCommentId);
     }
   }
 
   setDeleteClickHandler(callback) {
     this._callback.deleteClick = callback;
-    this.getElement().querySelector(`.film-details__comments-list`).addEventListener(`click`, this._deleteClickHandler);
   }
 
   setClickClosePopupHandler(callback) {
     this._callback.click = callback;
-    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickClosePopupHandler);
   }
 
   setEscPressClosePopupHandler(callback) {
     this._callback.escKeydown = callback;
-    document.addEventListener(`keydown`, this._escPressClosePopupHandler);
   }
 
   setWatchlistClickHandler(callback) {
@@ -272,7 +268,6 @@ export default class Popup extends SmartView {
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
-    document.addEventListener(`keydown`, this._formSubmitHandler);
   }
 
   static parseFilmToData(film, comments) {
@@ -324,18 +319,29 @@ export default class Popup extends SmartView {
     this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`change`, this._emojiChangeHandler);
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._commentInputHandler);
     this.getElement().querySelector(`.film-details__controls`).addEventListener(`change`, this._controlsChangeHandler);
+
+    this.getElement().querySelector(`.film-details__comments-list`).addEventListener(`click`, this._deleteClickHandler);
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickClosePopupHandler);
+
+    document.addEventListener(`keydown`, this._escPressClosePopupHandler);
+    document.addEventListener(`keydown`, this._formSubmitHandler);
   }
 
   restoreHandlers() {
     document.removeEventListener(`keydown`, this._escPressClosePopupHandler);
+    document.removeEventListener(`keydown`, this._formSubmitHandler);
+
     this._setInnerHandlers();
     this.getElement().scrollTop = this._scrollPosition;
   }
 
   reset(movie, comments) {
+    const prevScrollTop = this._scrollPosition;
     this.updateData(
         Popup.parseFilmToData(movie, comments)
     );
+    this._scrollPosition = prevScrollTop;
+    this.getElement().scrollTop = this._scrollPosition;
   }
 
 }
