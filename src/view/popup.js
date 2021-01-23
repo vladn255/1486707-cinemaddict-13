@@ -224,7 +224,7 @@ export default class Popup extends SmartView {
   _formSubmitHandler(evt) {
     if (evt.ctrlKey && evt.key === KeyBindings.ENTER) {
       evt.preventDefault();
-      this._scrollPosition = this.getElement().scrollTop;
+
       const newComment = Popup.parseDataToLocalComment(this._data);
 
       if (newComment) {
@@ -235,7 +235,7 @@ export default class Popup extends SmartView {
 
   _deleteClickHandler(evt) {
     evt.preventDefault();
-    this._scrollPosition = this.getElement().scrollTop;
+
     if (evt.target.closest(`.film-details__comment-delete`)) {
       const deletedCommentId = evt.target.dataset.commentId;
       this._callback.deleteClick(deletedCommentId);
@@ -328,20 +328,14 @@ export default class Popup extends SmartView {
   }
 
   restoreHandlers() {
-    document.removeEventListener(`keydown`, this._escPressClosePopupHandler);
-    document.removeEventListener(`keydown`, this._formSubmitHandler);
-
     this._setInnerHandlers();
     this.getElement().scrollTop = this._scrollPosition;
   }
 
   reset(movie, comments) {
-    const prevScrollTop = this._scrollPosition;
     this.updateData(
         Popup.parseFilmToData(movie, comments)
     );
-    this._scrollPosition = prevScrollTop;
-    this.getElement().scrollTop = this._scrollPosition;
   }
 
 }

@@ -1,5 +1,4 @@
 import {FilterType} from "../utils/const.js";
-import {remove} from "../utils/render.js";
 import AbstractView from "./abstract.js";
 
 const createFilterItemTemplate = (filter, currentFilterType) => {
@@ -64,14 +63,9 @@ export default class Filters extends AbstractView {
   }
 
   _filterTypeClickHandler(evt) {
-    if (evt.target.closest(`.main-navigation__item`)) {
-      evt.preventDefault();
-      const clickedFilter = evt.target.closest(`.main-navigation__item `).dataset.filterType;
-      this._callback.filterTypeChange(clickedFilter);
-      if (clickedFilter !== `stats`) {
-        remove(document.querySelector(`.statistics`));
-      }
-    }
+    evt.preventDefault();
+    const clickedFilter = evt.target.closest(`.main-navigation__item `).dataset.filterType;
+    this._callback.filterTypeChange(clickedFilter);
   }
 
   _statsClickHandler(evt) {

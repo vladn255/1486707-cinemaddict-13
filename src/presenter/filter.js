@@ -5,11 +5,10 @@ import {filter} from "../utils/filter.js";
 import FiltersView from "../view/filters.js";
 
 export default class Filter {
-  constructor(filterContainer, filterModel, moviesModel, currentMenuItem) {
+  constructor(filterContainer, filterModel, moviesModel) {
     this._filterContainer = filterContainer;
     this._filterModel = filterModel;
     this._moviesModel = moviesModel;
-    this._currentMenuItem = currentMenuItem;
     this._currentFilter = null;
 
     this._filterComponent = null;
@@ -83,10 +82,6 @@ export default class Filter {
         type: FilterType.FAVORITES,
         count: filter[FilterType.FAVORITES](movies).length,
         text: `Favorites`
-      },
-      {
-        type: FilterType.STATS,
-        text: `Stats`
       }
     ];
   }

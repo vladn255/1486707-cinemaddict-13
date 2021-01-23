@@ -43,10 +43,6 @@ filterPresenter.init();
 const moviesList = new MoviesListPresenter(siteMainElement, moviesModel, filterModel, commentsModel);
 moviesList.init();
 
-// // рендер статистики пользователя в main
-// const statsView = new StatsView(moviesModel.getMovies());
-// render(siteMainElement, statsView, RenderPosition.BEFORE_END);
-
 // рендер блока статистики в  footer'е
 const footerStatisticsElement = siteFooterElement.querySelector(`.footer__statistics`);
 render(footerStatisticsElement, new FooterStatsView(filmsNumber), RenderPosition.BEFORE_END);

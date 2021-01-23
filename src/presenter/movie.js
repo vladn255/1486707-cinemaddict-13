@@ -59,13 +59,6 @@ export default class Movie {
       replace(this._movieCardView, prevMovieView);
     }
 
-    // if (prevPopupView !== null && document.body.contains(prevPopupView.getElement())) {
-    //   replace(this._popupView, prevPopupView);
-    //   remove(prevPopupView);
-    //   this._closePopup();
-    //   this._showPopup();
-    // }
-
     remove(prevMovieView);
   }
 
@@ -90,6 +83,10 @@ export default class Movie {
 
     if (prevPopupView !== null && document.body.contains(prevPopupView.getElement())) {
       remove(prevPopupView);
+    }
+
+    if (document.body.contains(document.querySelector(`.film-details`))) {
+      document.querySelector(`.film-details`).remove();
     }
 
     document.body.classList.add(`hide-overflow`);
@@ -117,6 +114,10 @@ export default class Movie {
     document.body.classList.remove(`hide-overflow`);
     this._popupView.reset(this._movie, this._comments);
     this._commentsModel.removeObserver(this._handleCommentsModelEvent);
+
+    document.removeEventListener(`keydown`, this._escPressClosePopupHandler);
+    document.removeEventListener(`keydown`, this._formSubmitHandler);
+
     remove(this._popupView);
   }
 

@@ -26,7 +26,12 @@ const getSortedGenreList = (movies) => {
   return unsortedGenresList.sort(sortByGenresCount);
 };
 
-const getMostWatchedGenre = (genresList) => genresList[0].genreName;
+const getMostWatchedGenre = (genresList) => {
+  if (genresList.length !== 0) {
+    return genresList[0].genreName;
+  }
+  return 0;
+};
 
 const getChartHeight = (list) => {
   return list.length * BAR_HEIGHT;
