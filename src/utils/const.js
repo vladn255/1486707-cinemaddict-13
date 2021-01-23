@@ -72,6 +72,14 @@ const KeyBindings = {
   CONTROL: `Control`
 };
 
+const StatsFilters = {
+  ALL_TIME: `all-time`,
+  TODAY: `today`,
+  WEEK: `week`,
+  MONTH: `month`,
+  YEAR: `year`
+};
+
 
 export {
   SortType,
@@ -81,5 +89,6 @@ export {
   UpdateType,
   FilterType,
   ListTypes,
-  KeyBindings
+  KeyBindings,
+  StatsFilters
 };

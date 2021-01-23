@@ -2,9 +2,9 @@ import {FilterType} from "../utils/const.js";
 import {remove} from "../utils/render.js";
 import AbstractView from "./abstract.js";
 
-const createFilterItemTemplate = (filter, currentFilterType, currentMenuItem) => {
+const createFilterItemTemplate = (filter, currentFilterType) => {
   const {type, count, text} = filter;
-  const activeFilter = currentMenuItem !== FilterType.STATS
+  const activeFilter = currentFilterType !== FilterType.STATS
     ? currentFilterType
     : null;
 
@@ -31,21 +31,6 @@ const createFilterItemTemplate = (filter, currentFilterType, currentMenuItem) =>
   return (``);
 };
 
-const createStatsTemplate = (filter, currentFilterType) => {
-  const {type, text} = filter;
-
-  if (type === FilterType.STATS) {
-    return (
-      `<a href="#${type}" class="main-navigation__additional
-      ${currentFilterType === FilterType.STATS
-        ? `main-navigation__additional--active`
-        : ``}
-      " value="${type}" data-filter-type="${type}">${text}</a>`
-    );
-  }
-  return (``);
-};
-
 const createNavMenuTemplate = (filters, currentFilterType, currentMenuItem) => {
   const filterItemsTemplate = filters
   .map((filter) => createFilterItemTemplate(filter, currentFilterType, currentMenuItem)).join(``);
@@ -55,24 +40,27 @@ const createNavMenuTemplate = (filters, currentFilterType, currentMenuItem) => {
       <div class="main-navigation__items">
         ${filterItemsTemplate}
       </div>
-      ${createStatsTemplate(filters.find((filter) => filter.type === FilterType.STATS), currentFilterType, currentMenuItem)}
+      <a href="#stats" class="main-navigation__additional
+      ${currentFilterType === FilterType.STATS
+      ? `main-navigation__additional--active`
+      : ``}
+      " value="stats" data-filter-type="stats">Stats</a>
     </nav>`);
 };
 
 
 export default class Filters extends AbstractView {
-  constructor(filters, currentFilterType, currentMenuItem) {
+  constructor(filters, currentFilterType) {
     super();
     this._filters = filters;
     this._currentFilterType = currentFilterType;
-    this._currentMenuItem = currentMenuItem;
 
     this._filterTypeClickHandler = this._filterTypeClickHandler.bind(this);
     this._statsClickHandler = this._statsClickHandler.bind(this);
   }
 
   getTemplate() {
-    return createNavMenuTemplate(this._filters, this._currentFilterType, this._currentMenuItem);
+    return createNavMenuTemplate(this._filters, this._currentFilterType);
   }
 
   _filterTypeClickHandler(evt) {
@@ -100,7 +88,7 @@ export default class Filters extends AbstractView {
   }
 
   setInnerHandlers() {
-    this.getElement().addEventListener(`click`, this._filterTypeClickHandler);
+    this.getElement().querySelector(`.main-navigation__items`).addEventListener(`click`, this._filterTypeClickHandler);
     this.getElement().querySelector(`.main-navigation__additional`).addEventListener(`click`, this._statsClickHandler);
   }
 }
