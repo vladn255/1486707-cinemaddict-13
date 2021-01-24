@@ -32,7 +32,8 @@ const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
   MAJOR: `MAJOR`,
-  STATS: `stats`
+  STATS: `stats`,
+  INIT: `INIT`
 };
 
 const FilterType = {
@@ -80,6 +81,11 @@ const StatsFilters = {
   YEAR: `year`
 };
 
+const NetworkValues = {
+  AUTHORIZATION: `Basic PEYMlSIwGLp6JKVJo`,
+  END_POINT: `https://13.ecmascript.pages.academy/cinemaddict`
+};
+
 
 export {
   SortType,
@@ -90,5 +96,6 @@ export {
   FilterType,
   ListTypes,
   KeyBindings,
-  StatsFilters
+  StatsFilters,
+  NetworkValues
 };

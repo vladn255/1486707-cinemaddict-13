@@ -47,10 +47,46 @@ const createCommentItem = (comment) => {
   );
 };
 
+// создание списка комментариев
+const createCommentsList = (isLoading, comments) => {
+  if (isLoading) {
+    return (
+      `<h2 class="films-list__title">Loading...</h2>`
+    );
+  } else {
+    return (
+      `${comments.map((comment) => {
+        return createCommentItem(comment);
+      }).join(``)}`
+    );
+  }
+};
+
 // создание шаблона информации о фильме
 const createPopUpTemplate = (data) => {
 
-  const {cover, title, rate, description, originalTitle, ageRestriction, releaseDate, duration, genres, director, screenwriters, cast, country, isToWatch, isAlreadyWatched, isInFavorites, commentEmoji, newComment, comments} = data;
+  const {
+    cover,
+    title,
+    rate,
+    description,
+    originalTitle,
+    ageRestriction,
+    releaseDate,
+    duration,
+    genres,
+    director,
+    screenwriters,
+    cast,
+    country,
+    isToWatch,
+    isAlreadyWatched,
+    isInFavorites,
+    commentEmoji,
+    newComment,
+    comments,
+    isLoading
+  } = data;
 
   const controls = [
     {
@@ -141,9 +177,7 @@ const createPopUpTemplate = (data) => {
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
             <ul class="film-details__comments-list">
-              ${comments.map((comment) => {
-      return createCommentItem(comment);
-    }).join(``)}
+              ${createCommentsList(isLoading, comments)}
             </ul>
 
             <div class="film-details__new-comment">
@@ -174,9 +208,9 @@ const createPopUpTemplate = (data) => {
 };
 
 export default class Popup extends SmartView {
-  constructor(filmCard, comments) {
+  constructor(filmCard, comments, isLoading) {
     super();
-    this._data = Popup.parseFilmToData(filmCard, comments);
+    this._data = Popup.parseFilmToData(filmCard, comments, isLoading);
     this._scrollPosition = 0;
 
     this._clickClosePopupHandler = this._clickClosePopupHandler.bind(this);
@@ -270,12 +304,13 @@ export default class Popup extends SmartView {
     this._callback.formSubmit = callback;
   }
 
-  static parseFilmToData(film, comments) {
+  static parseFilmToData(film, comments, isLoading) {
     return Object.assign(
         {},
         film,
         {
           comments,
+          isLoading,
           commentEmoji: null,
           newComment: null
         }

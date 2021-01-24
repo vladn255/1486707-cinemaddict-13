@@ -9,17 +9,20 @@ import MoviesListView from "../view/movies-list";
 import MoviesWrapperView from "../view/movies-wrapper.js";
 import SortMenuView from "../view/sort-menu.js";
 import StatsView from "../view/stats.js";
+import Loading from "../view/loading.js";
 
 import MoviePresenter from "./movie.js";
 
 export default class MoviesList {
-  constructor(container, moviesModel, filterModel, commentsModel) {
+  constructor(container, moviesModel, filterModel, commentsModel, api) {
     this._container = container;
     this._moviesModel = moviesModel;
     this._filterModel = filterModel;
     this._commentsModel = commentsModel;
+    this._api = api;
     this._renderedMoviesCount = MoviesListData.CARDS_MAIN_QUANTITY;
     this._currentSortButton = SortType.DEFAULT;
+    this._isLoading = true;
 
     this._moviesWrapperComponent = null;
     this._sortMenuComponent = null;
@@ -33,6 +36,7 @@ export default class MoviesList {
     this._allMoviesListComponent = null;
     this._topRatedListComponent = null;
     this._topCommentedListComponent = null;
+    this._loadingComponent = null;
     this._moviePresenter = {};
     this._moviesList = [];
 
@@ -92,6 +96,12 @@ export default class MoviesList {
     this._moviePresenter = {};
   }
 
+  // рендер экрана загрузки
+  _renderLoadingList() {
+    this._loadingComponent = new Loading();
+    render(this._moviesElement, this._loadingComponent, RenderPosition.BEFORE_END);
+  }
+
   // рендер пустого списка - заглушки
   _renderEmptyList() {
     const moviesListComponent = new MoviesListView(ListTypes.EMPTY_LIST);
@@ -146,11 +156,20 @@ export default class MoviesList {
     this._renderMostCommented();
   }
 
-  // отрисовка списков фильмов
-  _renderMoviesLists() {
+  // рендер загруженных фильмов
+  _renderLoadedMovies() {
     return !this._getMovies().length
       ? this._renderEmptyList()
       : this._renderMainMoviesLists();
+  }
+
+  // отрисовка списков фильмов
+  _renderMoviesLists() {
+    if (this._isLoading) {
+      this._renderLoadingList();
+      return;
+    }
+    this._renderLoadedMovies();
   }
 
   // очистка списка фильмов
@@ -176,7 +195,9 @@ export default class MoviesList {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_MOVIE:
-        this._moviesModel.updateMovie(updateType, update);
+        this._api.updateMovie(update).then((response) => {
+          this._moviesModel.updateMovie(updateType, response);
+        });
         break;
       case UserAction.DELETE_COMMENT:
         this._commentsModel.deleteComment(updateType, update);
@@ -210,10 +231,14 @@ export default class MoviesList {
 
       case UpdateType.STATS:
         this._clearMoviesContainer({resetSortType: true});
-
         this._statsComponent = new StatsView(this._moviesModel.getMovies());
         render(this._container, this._statsComponent, RenderPosition.BEFORE_END);
         break;
+
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderMoviesLists();
     }
   }
 
@@ -287,6 +312,11 @@ export default class MoviesList {
     if (this._statsComponent) {
       remove(this._statsComponent);
       this._statsComponent = null;
+    }
+
+    if (this._loadingComponent) {
+      remove(this._loadingComponent);
+      this._loadingComponent = null;
     }
   }
 

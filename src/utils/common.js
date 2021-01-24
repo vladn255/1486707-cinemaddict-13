@@ -20,10 +20,14 @@ const sortByRate = (movieA, movieB) => movieB.rate - movieA.rate;
 // сортировка по количеству комментариев
 const sortByCommentsCount = (movieA, movieB) => movieB.commentsCount - movieA.commentsCount;
 
+// генерация id комментарий
+const generateId = () => Date.now() + parseInt(Math.random() * 1000, 10);
+
 export {
   getRandomInteger,
   getShortText,
   sortByRate,
-  sortByCommentsCount
+  sortByCommentsCount,
+  generateId
 };
 

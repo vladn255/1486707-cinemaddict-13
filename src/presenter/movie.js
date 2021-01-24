@@ -1,28 +1,24 @@
 import {RenderPosition, render, replace, remove} from "../utils/render.js";
-import {UserAction, UpdateType} from "../utils/const.js";
+import {UserAction, UpdateType, NetworkValues} from "../utils/const.js";
 
-import {generateComment} from "../mock/comment.js";
+import Api from "../api.js";
 
 import MovieCardView from "../view/movie-card.js";
 import PopupView from "../view/popup.js";
 
-const COMMENTS_QUANTITY = 3;
-
-const comments = [];
-for (let j = 0; j < COMMENTS_QUANTITY; j++) {
-  comments.push(generateComment());
-}
+const api = new Api(NetworkValues.END_POINT, NetworkValues.AUTHORIZATION);
 
 export default class Movie {
   constructor(container, changeData, commentsModel) {
     this._container = container;
     this._commentsModel = commentsModel;
-    this._commentsModel.setComments(comments);
 
     this._changeData = changeData;
 
     this._movieCardView = null;
     this._popupView = null;
+    this._isLoading = true;
+
     this._filmCardClickHandler = this._filmCardClickHandler.bind(this);
     this._closePopupHandler = this._closePopupHandler.bind(this);
 
@@ -38,11 +34,10 @@ export default class Movie {
 
   init(movie) {
     this._movie = movie;
-    this._comments = this._commentsModel.getComments();
+    this._commentsCount = this._movie.comments.length;
     const prevMovieView = this._movieCardView;
-    // const prevPopupView = this._popupView;
 
-    this._movieCardView = new MovieCardView(this._movie, this._comments);
+    this._movieCardView = new MovieCardView(this._movie, this._commentsCount);
 
     this._movieCardView.setFilmCardClickHandler(this._filmCardClickHandler);
 
@@ -91,22 +86,29 @@ export default class Movie {
 
     document.body.classList.add(`hide-overflow`);
 
-    this._comments = this._commentsModel.getComments();
-    this._popupView = new PopupView(this._movie, this._comments);
+    this._comments = [];
+    this._popupView = new PopupView(this._movie, this._comments, this._isLoading);
 
     this._popupView.setClickClosePopupHandler(this._closePopupHandler);
     this._popupView.setEscPressClosePopupHandler(this._closePopupHandler);
 
-    this._popupView.setWatchlistClickHandler(this._handleWatchlistClick);
-    this._popupView.setHistoryClickHandler(this._handleHistoryClick);
-    this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
-
-    this._popupView.setDeleteClickHandler(this._handleDeleteClick);
-    this._popupView.setFormSubmitHandler(this._handleAddComment);
-
     render(document.body, this._popupView.getElement(), RenderPosition.BEFORE_END);
 
     this._commentsModel.addObserver(this._handleCommentsModelEvent);
+
+    api.getComments(this._movie).then((commentsList) => {
+      this._commentsModel.setComments(UpdateType.INIT, commentsList);
+
+      this._popupView.setWatchlistClickHandler(this._handleWatchlistClick);
+      this._popupView.setHistoryClickHandler(this._handleHistoryClick);
+      this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
+
+      this._popupView.setDeleteClickHandler(this._handleDeleteClick);
+      this._popupView.setFormSubmitHandler(this._handleAddComment);
+    })
+    .catch(() => {
+      this._commentsModel.setComments(UpdateType.INIT, []);
+    });
   }
 
   // скрытие попапа
@@ -208,6 +210,14 @@ export default class Movie {
     switch (updateType) {
       case UpdateType.PATCH:
         this.init(this._movie);
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        this._comments = this._commentsModel.getComments();
+        this._popupView.updateData({
+          comments: this._comments,
+          isLoading: this._isLoading
+        });
         break;
     }
   }
