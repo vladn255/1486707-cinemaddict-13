@@ -1,5 +1,5 @@
 import {getRandomInteger} from "../utils/common.js";
-import {turnMinutesToHours} from "../utils/date-time.js";
+import dayjs from "dayjs";
 
 const FilmData = {
   RANDOM_SENTENCES: [
@@ -32,7 +32,9 @@ const FilmData = {
     `drama`,
     `thriller`,
     `action`,
-    `biopic`
+    `biopic`,
+    `animation`,
+    `horror`
   ],
   DIRECTORS: [
     `Scott Cooper`,
@@ -99,7 +101,7 @@ const generateReleaseDate = () => {
 
 // генерация длительности
 const generateDuration = () => {
-  return turnMinutesToHours(getRandomInteger(1, 210));
+  return getRandomInteger(1, 210);
 };
 
 // генерация имени директора
@@ -130,6 +132,9 @@ const generateCountry = () => {
 // генерация случайного id
 const generateId = () => Date.now() + parseInt(Math.random() * 1000, 10);
 
+// генерация даты просмотра
+const generateWatchDate = (date) => dayjs().subtract(date, `day`).toDate();
+
 const generateFilmCard = () => {
 
   const COMMENT_COUNT_MAX = 5;
@@ -152,7 +157,8 @@ const generateFilmCard = () => {
     ageRestriction: generateAgeRestriction(),
     isToWatch: Boolean(getRandomInteger(0, 1)),
     isAlreadyWatched: Boolean(getRandomInteger(0, 1)),
-    isInFavorites: Boolean(getRandomInteger(0, 1))
+    isInFavorites: Boolean(getRandomInteger(0, 1)),
+    watchDate: generateWatchDate(getRandomInteger(0, 450))
   };
 };
 

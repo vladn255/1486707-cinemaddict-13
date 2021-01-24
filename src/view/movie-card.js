@@ -1,6 +1,7 @@
-import {getYDate} from "../utils/date-time.js";
+import {getYDate, turnMinutesToHours} from "../utils/date-time.js";
 import {getShortText} from "../utils/common.js";
 import AbstractView from "./abstract.js";
+
 
 const createFilmArticle = (filmCard, comments) => {
   let {cover, title, rate, releaseDate, duration, genres, description, isToWatch, isAlreadyWatched, isInFavorites} = filmCard;
@@ -32,7 +33,7 @@ const createFilmArticle = (filmCard, comments) => {
         <p class="film-card__rating">${rate}</p>
         <p class="film-card__info">
           <span class="film-card__year">${getYDate(releaseDate)}</span>
-          <span class="film-card__duration">${duration}</span>
+          <span class="film-card__duration">${turnMinutesToHours(duration)}</span>
           <span class="film-card__genre">${genre}</span>
         </p>
         <img src="${cover}" alt="${title}" class="film-card__poster">

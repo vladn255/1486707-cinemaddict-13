@@ -1,3 +1,4 @@
+import {replace} from "../utils/render.js";
 import AbstractView from "./abstract.js";
 
 export default class Smart extends AbstractView {
@@ -26,18 +27,20 @@ export default class Smart extends AbstractView {
 
   updateElement() {
     let prevElement = this.getElement();
-    const parent = prevElement.parentElement;
+    prevElement.scrollTop = this.getElement().scrollTop;
+
     this.removeElement();
 
     const newElement = this.getElement();
+    newElement.scrollTop = prevElement.scrollTop;
 
-    parent.replaceChild(newElement, prevElement);
+    replace(newElement, prevElement);
 
     this.restoreHandlers();
   }
 
   restoreHandlers() {
-    throw new Error(`Abstract method not implemented: reserHadlsers`);
+    throw new Error(`Abstract method not implemented: restoreHandlers`);
   }
 
 }

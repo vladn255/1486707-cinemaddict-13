@@ -31,14 +31,16 @@ const UserAction = {
 const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
-  MAJOR: `MAJOR`
+  MAJOR: `MAJOR`,
+  STATS: `stats`
 };
 
 const FilterType = {
   ALL_MOVIES: `all`,
   WATCHLIST: `watchlist`,
   HISTORY: `history`,
-  FAVORITES: `favorites`
+  FAVORITES: `favorites`,
+  STATS: `stats`
 };
 
 const ListTypes = {
@@ -70,6 +72,15 @@ const KeyBindings = {
   CONTROL: `Control`
 };
 
+const StatsFilters = {
+  ALL_TIME: `all-time`,
+  TODAY: `today`,
+  WEEK: `week`,
+  MONTH: `month`,
+  YEAR: `year`
+};
+
+
 export {
   SortType,
   FilmDetails,
@@ -78,5 +89,6 @@ export {
   UpdateType,
   FilterType,
   ListTypes,
-  KeyBindings
+  KeyBindings,
+  StatsFilters
 };

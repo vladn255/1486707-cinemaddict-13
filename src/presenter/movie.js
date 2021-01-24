@@ -40,7 +40,7 @@ export default class Movie {
     this._movie = movie;
     this._comments = this._commentsModel.getComments();
     const prevMovieView = this._movieCardView;
-    const prevPopupView = this._popupView;
+    // const prevPopupView = this._popupView;
 
     this._movieCardView = new MovieCardView(this._movie, this._comments);
 
@@ -57,13 +57,6 @@ export default class Movie {
 
     while (this._container.contains(prevMovieView.getElement())) {
       replace(this._movieCardView, prevMovieView);
-    }
-
-    if (prevPopupView !== null && document.body.contains(prevPopupView.getElement())) {
-      replace(this._popupView, prevPopupView);
-      remove(prevPopupView);
-      this._closePopup();
-      this._showPopup();
     }
 
     remove(prevMovieView);
@@ -86,8 +79,19 @@ export default class Movie {
 
   // показ попапа
   _showPopup() {
+    const prevPopupView = this._popupView;
+
+    if (prevPopupView !== null && document.body.contains(prevPopupView.getElement())) {
+      remove(prevPopupView);
+    }
+
+    if (document.body.contains(document.querySelector(`.film-details`))) {
+      document.querySelector(`.film-details`).remove();
+    }
+
     document.body.classList.add(`hide-overflow`);
 
+    this._comments = this._commentsModel.getComments();
     this._popupView = new PopupView(this._movie, this._comments);
 
     this._popupView.setClickClosePopupHandler(this._closePopupHandler);
@@ -110,6 +114,10 @@ export default class Movie {
     document.body.classList.remove(`hide-overflow`);
     this._popupView.reset(this._movie, this._comments);
     this._commentsModel.removeObserver(this._handleCommentsModelEvent);
+
+    document.removeEventListener(`keydown`, this._escPressClosePopupHandler);
+    document.removeEventListener(`keydown`, this._formSubmitHandler);
+
     remove(this._popupView);
   }
 
@@ -164,6 +172,9 @@ export default class Movie {
         UpdateType.PATCH,
         parseInt(deletedCommentId, 10)
     );
+    this._popupView.updateData({
+      comments: this._comments
+    });
   }
 
   // обработчик добавления комментария
@@ -174,6 +185,9 @@ export default class Movie {
           UpdateType.PATCH,
           Object.assign({}, newComment)
       );
+      this._popupView.updateData({
+        comments: this._comments
+      });
     }
   }
 
@@ -193,9 +207,7 @@ export default class Movie {
   _handleCommentsModelEvent(updateType) {
     switch (updateType) {
       case UpdateType.PATCH:
-        this._closePopup();
         this.init(this._movie);
-        this._showPopup();
         break;
     }
   }
