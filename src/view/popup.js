@@ -83,8 +83,7 @@ const createPopUpTemplate = (data) => {
     commentEmoji,
     newComment,
     comments,
-    isLoading,
-    isDisabled
+    isLoading
   } = data;
 
   const controls = [
@@ -115,7 +114,7 @@ const createPopUpTemplate = (data) => {
   const genresTemplate = genres.map((item) => `<span class="film-details__genre">${item}</span>`).join(``);
   return (
     `<section class="film-details">
-      <form class="film-details__inner" action="" method="get" ${isDisabled ? `disabled` : ``}>
+      <form class="film-details__inner" action="" method="get" >
         <div class="film-details__top-container">
           <div class="film-details__close">
             <button class="film-details__close-btn" type="button">close</button>
@@ -207,9 +206,10 @@ const createPopUpTemplate = (data) => {
 };
 
 export default class Popup extends SmartView {
-  constructor(filmCard, comments, isLoading) {
+  constructor(filmCard, comments, isLoading, isDisabled) {
     super();
-    this._data = Popup.parseFilmToData(filmCard, comments, isLoading);
+    this._data = Popup.parseFilmToData(filmCard, comments, isLoading, isDisabled);
+    this._isDisabled = isDisabled;
     this._scrollPosition = 0;
 
     this._clickClosePopupHandler = this._clickClosePopupHandler.bind(this);
@@ -224,6 +224,7 @@ export default class Popup extends SmartView {
   }
 
   getTemplate() {
+    console.log(this._data.isDisabled)
     return createPopUpTemplate(this._data);
   }
 
@@ -255,9 +256,8 @@ export default class Popup extends SmartView {
   }
 
   _formSubmitHandler(evt) {
-    if (evt.ctrlKey && evt.key === KeyBindings.ENTER) {
+    if (evt.ctrlKey && evt.key === KeyBindings.ENTER && !this._data.isDisabled) {
       evt.preventDefault();
-
       const newComment = Popup.parseDataToLocalComment(this._data);
 
       if (newComment) {
@@ -270,6 +270,7 @@ export default class Popup extends SmartView {
     evt.preventDefault();
 
     if (evt.target.closest(`.film-details__comment-delete`)) {
+
       const deletedCommentId = evt.target.dataset.commentId.toString(10);
       this._callback.deleteClick(deletedCommentId);
     }
@@ -303,7 +304,7 @@ export default class Popup extends SmartView {
     this._callback.formSubmit = callback;
   }
 
-  static parseFilmToData(film, comments, isLoading) {
+  static parseFilmToData(film, comments, isLoading, isDisabled) {
     return Object.assign(
         {},
         film,
@@ -311,7 +312,8 @@ export default class Popup extends SmartView {
           comments,
           isLoading,
           commentEmoji: null,
-          newComment: null
+          newComment: null,
+          isDisabled
         }
     );
   }

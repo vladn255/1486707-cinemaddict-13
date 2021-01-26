@@ -91,6 +91,13 @@ const NetworkValues = {
   END_POINT: `https://13.ecmascript.pages.academy/cinemaddict`
 };
 
+const State = {
+  DELETING: `DELETING`,
+  SAVING: `SAVING`,
+  ABORTING_DELETING: `ABORTING_DELETING`,
+  ABORTING_SAVING: `ABORTING_SAVING`
+};
+
 
 export {
   SortType,
@@ -102,5 +109,6 @@ export {
   ListTypes,
   KeyBindings,
   StatsFilters,
-  NetworkValues
+  NetworkValues,
+  State
 };

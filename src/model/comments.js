@@ -42,6 +42,14 @@ export default class Comments extends Observer {
     this._notify(updateType);
   }
 
+  switchDeletingStatus(updateType, updateId, boolean) {
+    const index = this._comments.findIndex((comment) => comment.id === updateId);
+
+    this._comments[index].isDeleting = boolean;
+
+    this._notify(updateType);
+  }
+
   static adaptToClient(comment) {
     const adaptedComment = Object.assign(
         {},
@@ -49,6 +57,7 @@ export default class Comments extends Observer {
         {
           emoji: comment.emotion,
           text: comment.comment,
+          isDeleting: false
         }
     );
 
@@ -86,6 +95,7 @@ export default class Comments extends Observer {
 
     delete adaptedComment.emoji;
     delete adaptedComment.text;
+    delete adaptedComment.isDeleting;
 
     return adaptedComment;
   }

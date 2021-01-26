@@ -1,5 +1,5 @@
 import {RenderPosition, render, replace, remove} from "../utils/render.js";
-import {UserAction, UpdateType} from "../utils/const.js";
+import {UserAction, UpdateType, State} from "../utils/const.js";
 
 
 import MovieCardView from "../view/movie-card.js";
@@ -16,6 +16,7 @@ export default class Movie {
     this._movieCardView = null;
     this._popupView = null;
     this._isLoading = true;
+    this._isDisabled = false;
 
     this._filmCardClickHandler = this._filmCardClickHandler.bind(this);
     this._closePopupHandler = this._closePopupHandler.bind(this);
@@ -84,7 +85,7 @@ export default class Movie {
     document.body.classList.add(`hide-overflow`);
 
     this._comments = [];
-    this._popupView = new PopupView(this._movie, this._comments, this._isLoading);
+    this._popupView = new PopupView(this._movie, this._comments, this._isLoading, this._isDisabled);
 
     this._popupView.setClickClosePopupHandler(this._closePopupHandler);
     this._popupView.setEscPressClosePopupHandler(this._closePopupHandler);
@@ -181,14 +182,16 @@ export default class Movie {
           UpdateType.PATCH,
           Object.assign({}, newComment)
       );
-
     }
   }
 
   // обработчик изменения представления
   _handleCommentsViewAction(actionType, updateType, update) {
     switch (actionType) {
+
       case UserAction.DELETE_COMMENT:
+        this._setViewState(State.DELETING, update);
+
         this._api.deleteComment(update.toString(10)).then(() => {
           this._commentsModel.deleteComment(updateType, update.toString(10));
 
@@ -196,11 +199,14 @@ export default class Movie {
             this._commentsModel.setComments(UpdateType.INIT, commentsList);
           })
           .catch(() => {
-            this._commentsModel.setComments(UpdateType.INIT, []);
+            this._setViewState(State.ABORTING_DELETING);
           });
         });
         break;
+
       case UserAction.ADD_COMMENT:
+        this._setViewState(State.SAVING);
+
         this._api.addComment(this._movie, update).then((response) => {
           this._commentsModel.addComment(updateType, response.comments);
 
@@ -208,7 +214,7 @@ export default class Movie {
             this._commentsModel.setComments(UpdateType.INIT, commentsList);
           })
           .catch(() => {
-            this._commentsModel.setComments(UpdateType.INIT, []);
+            this._setViewState(State.ABORTING_SAVING);
           });
         });
         break;
@@ -227,7 +233,42 @@ export default class Movie {
         this._comments = this._commentsModel.getComments();
         this._popupView.updateData({
           comments: this._comments,
-          isLoading: this._isLoading
+          isLoading: this._isLoading,
+          isDisabled: false
+        });
+        break;
+    }
+  }
+
+  // установка состояний deleting... и блокировки формы
+  _setViewState(state, updateId) {
+
+    switch (state) {
+      case State.SAVING:
+        this._popupView.updateData({
+          isDisabled: true
+        });
+        break;
+
+      case State.DELETING:
+        this._commentsModel.switchDeletingStatus(UpdateType.INIT, updateId, true);
+        this._comments = this._commentsModel.getComments();
+        this._popupView.updateData({
+          comments: this._comments,
+        });
+        break;
+
+      case State.ABORTING_SAVING:
+        this._popupView.updateData({
+          isDisabled: false
+        });
+        break;
+
+      case State.ABORTING_DELETING:
+        this._commentsModel.switchDeletingStatus(UpdateType.INIT, updateId, false);
+        this._comments = this._commentsModel.getComments();
+        this._popupView.updateData({
+          comments: this._comments,
         });
         break;
     }
