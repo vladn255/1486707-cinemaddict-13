@@ -64,6 +64,11 @@ const ListTypes = {
     title: `There are no movies in our database`,
     isHidden: false,
     isExtra: false
+  },
+  LOADING: {
+    title: `Loading...`,
+    isHidden: false,
+    isExtra: false
   }
 };
 

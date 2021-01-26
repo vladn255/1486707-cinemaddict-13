@@ -4,8 +4,6 @@ import SmartView from "./smart.js";
 
 import he from "he";
 
-import {generateName} from "../mock/comment.js";
-
 
 // создание шаблона сведения о фильме
 const createFilmDetailItemTemplate = (detail, detailName) => {
@@ -29,7 +27,7 @@ const createEmojiItem = (emoji) => {
 
 // создание комментария
 const createCommentItem = (comment) => {
-  const {emoji, text, author, date, id} = comment;
+  const {emoji, text, author, date, id, isDeleting} = comment;
   return (
     `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
@@ -40,7 +38,7 @@ const createCommentItem = (comment) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${getYMDHMDate(date)}</span>
-          <button class="film-details__comment-delete" data-comment-id="${id}">Delete</button>
+          <button class="film-details__comment-delete" data-comment-id="${id}" ${isDeleting ? `disabled` : ``}>${isDeleting ? `Deleting...` : `Delete`}</button>
         </p>
       </div>
     </li>`
@@ -51,7 +49,7 @@ const createCommentItem = (comment) => {
 const createCommentsList = (isLoading, comments) => {
   if (isLoading) {
     return (
-      `<h2 class="films-list__title">Loading...</h2>`
+      `<li>Loading...</li>`
     );
   } else {
     return (
@@ -85,7 +83,8 @@ const createPopUpTemplate = (data) => {
     commentEmoji,
     newComment,
     comments,
-    isLoading
+    isLoading,
+    isDisabled
   } = data;
 
   const controls = [
@@ -116,7 +115,7 @@ const createPopUpTemplate = (data) => {
   const genresTemplate = genres.map((item) => `<span class="film-details__genre">${item}</span>`).join(``);
   return (
     `<section class="film-details">
-      <form class="film-details__inner" action="" method="get">
+      <form class="film-details__inner" action="" method="get" ${isDisabled ? `disabled` : ``}>
         <div class="film-details__top-container">
           <div class="film-details__close">
             <button class="film-details__close-btn" type="button">close</button>
@@ -271,7 +270,7 @@ export default class Popup extends SmartView {
     evt.preventDefault();
 
     if (evt.target.closest(`.film-details__comment-delete`)) {
-      const deletedCommentId = evt.target.dataset.commentId;
+      const deletedCommentId = evt.target.dataset.commentId.toString(10);
       this._callback.deleteClick(deletedCommentId);
     }
   }
@@ -327,8 +326,6 @@ export default class Popup extends SmartView {
     if (data.newComment) {
       localComment.text = data.newComment;
     }
-
-    localComment.author = generateName();
 
     return localComment;
   }

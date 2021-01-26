@@ -1,5 +1,4 @@
 import {UpdateType, NetworkValues} from "./utils/const.js";
-import {getRandomInteger} from "./utils/common.js";
 import {RenderPosition, render} from "./utils/render.js";
 import Api from "./api.js";
 
@@ -14,8 +13,6 @@ import MoviesListPresenter from "./presenter/movies-list.js";
 import FilterPresenter from "./presenter/filter";
 
 const api = new Api(NetworkValues.END_POINT, NetworkValues.AUTHORIZATION);
-
-const filmsNumber = getRandomInteger(0, 100000);
 
 const moviesModel = new MoviesModel();
 
@@ -38,13 +35,13 @@ filterPresenter.init();
 const moviesList = new MoviesListPresenter(siteMainElement, moviesModel, filterModel, commentsModel, api);
 moviesList.init();
 
-// рендер блока статистики в  footer'е
-const footerStatisticsElement = siteFooterElement.querySelector(`.footer__statistics`);
-render(footerStatisticsElement, new FooterStatsView(filmsNumber), RenderPosition.BEFORE_END);
-
 // получение фильмов с сервера и установка их в модель
 api.getMovies().then((movies) => {
   moviesModel.setMovies(UpdateType.INIT, movies);
+
+  // рендер блока статистики в  footer'е
+  const footerStatisticsElement = siteFooterElement.querySelector(`.footer__statistics`);
+  render(footerStatisticsElement, new FooterStatsView(moviesModel.getMovies().length), RenderPosition.BEFORE_END);
 })
 .catch(() => {
   moviesModel.setMovies(UpdateType.INIT, []);

@@ -1,17 +1,15 @@
 import {RenderPosition, render, replace, remove} from "../utils/render.js";
-import {UserAction, UpdateType, NetworkValues} from "../utils/const.js";
+import {UserAction, UpdateType} from "../utils/const.js";
 
-import Api from "../api.js";
 
 import MovieCardView from "../view/movie-card.js";
 import PopupView from "../view/popup.js";
 
-const api = new Api(NetworkValues.END_POINT, NetworkValues.AUTHORIZATION);
-
 export default class Movie {
-  constructor(container, changeData, commentsModel) {
+  constructor(container, changeData, commentsModel, api) {
     this._container = container;
     this._commentsModel = commentsModel;
+    this._api = api;
 
     this._changeData = changeData;
 
@@ -34,10 +32,9 @@ export default class Movie {
 
   init(movie) {
     this._movie = movie;
-    this._commentsCount = this._movie.comments.length;
     const prevMovieView = this._movieCardView;
 
-    this._movieCardView = new MovieCardView(this._movie, this._commentsCount);
+    this._movieCardView = new MovieCardView(this._movie);
 
     this._movieCardView.setFilmCardClickHandler(this._filmCardClickHandler);
 
@@ -96,19 +93,19 @@ export default class Movie {
 
     this._commentsModel.addObserver(this._handleCommentsModelEvent);
 
-    api.getComments(this._movie).then((commentsList) => {
+    this._api.getComments(this._movie.id).then((commentsList) => {
       this._commentsModel.setComments(UpdateType.INIT, commentsList);
-
-      this._popupView.setWatchlistClickHandler(this._handleWatchlistClick);
-      this._popupView.setHistoryClickHandler(this._handleHistoryClick);
-      this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
-
-      this._popupView.setDeleteClickHandler(this._handleDeleteClick);
-      this._popupView.setFormSubmitHandler(this._handleAddComment);
     })
     .catch(() => {
       this._commentsModel.setComments(UpdateType.INIT, []);
     });
+
+    this._popupView.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._popupView.setHistoryClickHandler(this._handleHistoryClick);
+    this._popupView.setFavoriteClickHandler(this._handleFavoriteClick);
+
+    this._popupView.setDeleteClickHandler(this._handleDeleteClick);
+    this._popupView.setFormSubmitHandler(this._handleAddComment);
   }
 
   // скрытие попапа
@@ -172,11 +169,8 @@ export default class Movie {
     this._handleCommentsViewAction(
         UserAction.DELETE_COMMENT,
         UpdateType.PATCH,
-        parseInt(deletedCommentId, 10)
+        deletedCommentId
     );
-    this._popupView.updateData({
-      comments: this._comments
-    });
   }
 
   // обработчик добавления комментария
@@ -187,9 +181,7 @@ export default class Movie {
           UpdateType.PATCH,
           Object.assign({}, newComment)
       );
-      this._popupView.updateData({
-        comments: this._comments
-      });
+
     }
   }
 
@@ -197,10 +189,28 @@ export default class Movie {
   _handleCommentsViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.DELETE_COMMENT:
-        this._commentsModel.deleteComment(updateType, update);
+        this._api.deleteComment(update.toString(10)).then(() => {
+          this._commentsModel.deleteComment(updateType, update.toString(10));
+
+          this._api.getComments(this._movie.id).then((commentsList) => {
+            this._commentsModel.setComments(UpdateType.INIT, commentsList);
+          })
+          .catch(() => {
+            this._commentsModel.setComments(UpdateType.INIT, []);
+          });
+        });
         break;
       case UserAction.ADD_COMMENT:
-        this._commentsModel.addComment(updateType, update);
+        this._api.addComment(this._movie, update).then((response) => {
+          this._commentsModel.addComment(updateType, response.comments);
+
+          this._api.getComments(this._movie.id).then((commentsList) => {
+            this._commentsModel.setComments(UpdateType.INIT, commentsList);
+          })
+          .catch(() => {
+            this._commentsModel.setComments(UpdateType.INIT, []);
+          });
+        });
         break;
     }
   }
@@ -211,6 +221,7 @@ export default class Movie {
       case UpdateType.PATCH:
         this.init(this._movie);
         break;
+
       case UpdateType.INIT:
         this._isLoading = false;
         this._comments = this._commentsModel.getComments();

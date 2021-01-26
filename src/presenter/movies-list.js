@@ -9,7 +9,6 @@ import MoviesListView from "../view/movies-list";
 import MoviesWrapperView from "../view/movies-wrapper.js";
 import SortMenuView from "../view/sort-menu.js";
 import StatsView from "../view/stats.js";
-import Loading from "../view/loading.js";
 
 import MoviePresenter from "./movie.js";
 
@@ -84,7 +83,7 @@ export default class MoviesList {
 
   // рендер карточки фильма
   _renderMovieCard(container, movie) {
-    const moviePresenter = new MoviePresenter(container, this._handleViewAction, this._commentsModel);
+    const moviePresenter = new MoviePresenter(container, this._handleViewAction, this._commentsModel, this._api);
     moviePresenter.init(movie);
     this._moviePresenter[movie.id] = moviePresenter;
   }
@@ -98,14 +97,13 @@ export default class MoviesList {
 
   // рендер экрана загрузки
   _renderLoadingList() {
-    this._loadingComponent = new Loading();
+    this._loadingComponent = new MoviesListView(ListTypes.LOADING);
     render(this._moviesElement, this._loadingComponent, RenderPosition.BEFORE_END);
   }
 
   // рендер пустого списка - заглушки
   _renderEmptyList() {
     const moviesListComponent = new MoviesListView(ListTypes.EMPTY_LIST);
-    this._moviesContainerList.push(moviesListComponent);
 
     render(this._moviesElement, moviesListComponent, RenderPosition.BEFORE_END);
   }
@@ -158,7 +156,7 @@ export default class MoviesList {
 
   // рендер загруженных фильмов
   _renderLoadedMovies() {
-    return !this._getMovies().length
+    return (this._getMovies().length === 0 || !this._getMovies())
       ? this._renderEmptyList()
       : this._renderMainMoviesLists();
   }
@@ -198,12 +196,6 @@ export default class MoviesList {
         this._api.updateMovie(update).then((response) => {
           this._moviesModel.updateMovie(updateType, response);
         });
-        break;
-      case UserAction.DELETE_COMMENT:
-        this._commentsModel.deleteComment(updateType, update);
-        break;
-      case UserAction.ADD_COMMENT:
-        this._commentsModel.addComment(updateType, update);
         break;
     }
   }

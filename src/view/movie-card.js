@@ -58,10 +58,10 @@ const createFilmArticle = (filmCard, commentsCount) => {
 };
 
 export default class MovieCard extends AbstractView {
-  constructor(filmCard, commentsCount) {
+  constructor(filmCard) {
     super();
     this._filmCard = filmCard;
-    this._commentsCount = commentsCount;
+    this._commentsCount = this._filmCard.comments.length;
     this._filmCardClickHandler = this._filmCardClickHandler.bind(this);
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
     this._historyClickHandler = this._historyClickHandler.bind(this);

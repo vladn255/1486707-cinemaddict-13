@@ -1,4 +1,5 @@
 import Observer from "../utils/observer.js";
+import dayjs from "dayjs";
 
 export default class Comments extends Observer {
   constructor() {
@@ -53,6 +54,22 @@ export default class Comments extends Observer {
 
     delete adaptedComment.emotion;
     delete adaptedComment.comment;
+
+    return adaptedComment;
+  }
+
+  static adaptLocalToServer(localComment) {
+    const adaptedComment = Object.assign(
+        {},
+        localComment,
+        {
+          "emotion": localComment.emoji,
+          "comment": localComment.text,
+          "date": dayjs().toDate()
+        }
+    );
+    delete adaptedComment.emoji;
+    delete adaptedComment.text;
 
     return adaptedComment;
   }
