@@ -224,7 +224,6 @@ export default class Popup extends SmartView {
   }
 
   getTemplate() {
-    console.log(this._data.isDisabled)
     return createPopUpTemplate(this._data);
   }
 
