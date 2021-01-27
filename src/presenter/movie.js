@@ -225,6 +225,7 @@ export default class Movie {
   _handleCommentsModelEvent(updateType) {
     switch (updateType) {
       case UpdateType.PATCH:
+        this._movie.comments = this._commentsModel.getComments();
         this.init(this._movie);
         break;
 

@@ -32,7 +32,7 @@ const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
   MAJOR: `MAJOR`,
-  STATS: `stats`,
+  STATS: `STATS`,
   INIT: `INIT`
 };
 

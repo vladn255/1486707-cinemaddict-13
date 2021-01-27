@@ -41,7 +41,7 @@ const createCommentItem = (comment) => {
           <button class="film-details__comment-delete" data-comment-id="${id}" ${isDeleting ? `disabled` : ``}>${isDeleting ? `Deleting...` : `Delete`}</button>
         </p>
       </div>
-    </li>`
+     </li>`
   );
 };
 
@@ -53,9 +53,7 @@ const createCommentsList = (isLoading, comments) => {
     );
   } else {
     return (
-      `${comments.map((comment) => {
-        return createCommentItem(comment);
-      }).join(``)}`
+      `${comments.map(createCommentItem).join(``)}`
     );
   }
 };
@@ -145,11 +143,7 @@ const createPopUpTemplate = (data) => {
                 ${createFilmDetailItemTemplate(getDMYDate(releaseDate), `releaseDate`)}
                 ${createFilmDetailItemTemplate(turnMinutesToHours(duration), `duration`)}
                 ${createFilmDetailItemTemplate(country, `country`)}
-                ${createFilmDetailItemTemplate(genresTemplate, `${
-      genres.length === 1
-        ? `genre`
-        : `genres`}`)}
-                </tr>
+                ${createFilmDetailItemTemplate(genresTemplate, `${genres.length === 1 ? `genre` : `genres`}`)}
               </table>
 
               <p class="film-details__film-description">
@@ -161,11 +155,8 @@ const createPopUpTemplate = (data) => {
           <section class="film-details__controls">
             ${controls.map(({name, modifier, isActive}) => {
       return (`
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="${modifier}" name="${modifier}" ${isActive
-          ? `checked`
-          : ``}>
-            <label for="${modifier}" class="film-details__control-label film-details__control-label--${modifier}">${name}</label>
-            `);
+            <input type="checkbox" class="film-details__control-input visually-hidden" id="${modifier}" name="${modifier}" ${isActive ? `checked` : ``}>
+            <label for="${modifier}" class="film-details__control-label film-details__control-label--${modifier}">${name}</label>`);
     }).join(``)}
           </section>
         </div>
@@ -180,20 +171,14 @@ const createPopUpTemplate = (data) => {
 
             <div class="film-details__new-comment">
               <div class="film-details__add-emoji-label">
-              ${commentEmoji
-      ? `<img src="./images/emoji/${commentEmoji}.png" width="55" height="55" alt="emoji-${commentEmoji}">`
-      : ``}
+              ${commentEmoji ? `<img src="./images/emoji/${commentEmoji}.png" width="55" height="55" alt="emoji-${commentEmoji}">` : ``}
               </div>
 
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${newComment
-      ? `${he.encode(newComment)}</textarea>`
-      : `</textarea>`}
-
+                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${newComment ? `${he.encode(newComment)}</textarea>` : `</textarea>`}
               </label>
 
-              <div class="film-details__emoji-list">
-                  ${emojis.map((emoji) => {
+              <div class="film-details__emoji-list">${emojis.map((emoji) => {
       return createEmojiItem(emoji);
     }).join(``)}
               </div>
@@ -261,6 +246,11 @@ export default class Popup extends SmartView {
 
       if (newComment) {
         this._callback.formSubmit(newComment);
+
+        this.updateData({
+          commentEmoji: null,
+          newComment: null,
+        }, true);
       }
     }
   }
@@ -361,8 +351,10 @@ export default class Popup extends SmartView {
   }
 
   restoreHandlers() {
+    document.removeEventListener(`keydown`, this._escPressClosePopupHandler);
+    document.removeEventListener(`keydown`, this._formSubmitHandler);
+
     this._setInnerHandlers();
-    this.getElement().scrollTop = this._scrollPosition;
   }
 
   reset(movie, comments) {

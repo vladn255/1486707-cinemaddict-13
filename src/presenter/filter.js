@@ -28,7 +28,7 @@ export default class Filter {
     const prevFilterComponent = this._filterComponent;
 
     this._filterComponent = new FiltersView(filters, this._currentFilter);
-    this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeClick);
+    this._filterComponent.setFilterTypeClickHandler(this._handleFilterTypeClick);
     this._filterComponent.setStatsClickHandler(this._handleStatsClick);
     this._filterComponent.setInnerHandlers();
 

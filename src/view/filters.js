@@ -3,31 +3,18 @@ import AbstractView from "./abstract.js";
 
 const createFilterItemTemplate = (filter, currentFilterType) => {
   const {type, count, text} = filter;
-  const activeFilter = currentFilterType !== FilterType.STATS
-    ? currentFilterType
-    : null;
+  const activeFilter = currentFilterType;
 
-  if (type !== FilterType.STATS) {
-    return (
-      `<a
-        href="#${type}"
-        class="main-navigation__item ${type === activeFilter
-        ? `main-navigation__item--active`
-        : ``}"
-        value="${type}" data-filter-type="${type}"
-      >
-      ${text}
-
-      ${type !== `all`
-        ? `<span class="main-navigation__item-count">
-            ${count}
-          </span>`
-        : ``
-      }
-      </a>`
-    );
-  }
-  return (``);
+  return (
+    `<a
+       href="#${type}"
+       class="main-navigation__item ${type === activeFilter ? `main-navigation__item--active` : ``}"
+       value="${type}" data-filter-type="${type}"
+       >
+       ${text}
+       ${type !== `all` ? `<span class="main-navigation__item-count">${count}</span>` : ``}
+     </a>`
+  );
 };
 
 const createNavMenuTemplate = (filters, currentFilterType, currentMenuItem) => {
@@ -39,12 +26,11 @@ const createNavMenuTemplate = (filters, currentFilterType, currentMenuItem) => {
       <div class="main-navigation__items">
         ${filterItemsTemplate}
       </div>
-      <a href="#stats" class="main-navigation__additional
-      ${currentFilterType === FilterType.STATS
-      ? `main-navigation__additional--active`
-      : ``}
-      " value="stats" data-filter-type="stats">Stats</a>
-    </nav>`);
+      <a
+       href="#stats" class="main-navigation__additional
+       ${currentFilterType === FilterType.STATS ? `main-navigation__additional--active` : ``}"
+       data-filter-type="stats">Stats</a>
+     </nav>`);
 };
 
 
@@ -63,9 +49,12 @@ export default class Filters extends AbstractView {
   }
 
   _filterTypeClickHandler(evt) {
-    evt.preventDefault();
-    const clickedFilter = evt.target.closest(`.main-navigation__item `).dataset.filterType;
-    this._callback.filterTypeChange(clickedFilter);
+    const target = evt.target.closest(`.main-navigation__item `);
+    if (target) {
+      evt.preventDefault();
+      const clickedFilter = target.dataset.filterType;
+      this._callback.filterTypeChange(clickedFilter);
+    }
   }
 
   _statsClickHandler(evt) {
@@ -73,7 +62,7 @@ export default class Filters extends AbstractView {
     this._callback.statsClick(evt.target.dataset.filterType);
   }
 
-  setFilterTypeChangeHandler(callback) {
+  setFilterTypeClickHandler(callback) {
     this._callback.filterTypeChange = callback;
   }
 
