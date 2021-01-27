@@ -81,7 +81,8 @@ const createPopUpTemplate = (data) => {
     commentEmoji,
     newComment,
     comments,
-    isLoading
+    isLoading,
+    isDisabled
   } = data;
 
   const controls = [
@@ -175,7 +176,7 @@ const createPopUpTemplate = (data) => {
               </div>
 
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${newComment ? `${he.encode(newComment)}</textarea>` : `</textarea>`}
+                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isDisabled ? `disabled` : ``}>${newComment ? `${he.encode(newComment)}</textarea>` : `</textarea>`}
               </label>
 
               <div class="film-details__emoji-list">${emojis.map((emoji) => {

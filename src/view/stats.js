@@ -8,6 +8,8 @@ import {filter} from "../utils/filter.js";
 import {FilterType, StatsFilters} from "../utils/const.js";
 import {sortByGenresCount, getGenresCountsInMovies} from "../utils/statistics.js";
 
+import {getProfileRating} from "./user-rank.js";
+
 const MINUTES_IN_HOUR = 60;
 const BAR_HEIGHT = 50;
 
@@ -113,7 +115,7 @@ const createUserStatsTemplate = (data) => {
     totalDurationHours = 0;
     totalDurationMinutes = 0;
     genresList = 0;
-    mostWatchedGenre = 0;
+    mostWatchedGenre = ``;
   } else {
     totalDurationHours = Math.floor(getMoviesWatchedDuration(movies) / MINUTES_IN_HOUR);
     totalDurationMinutes = getMoviesWatchedDuration(movies) % MINUTES_IN_HOUR;
@@ -126,7 +128,7 @@ const createUserStatsTemplate = (data) => {
       <p class="statistic__rank">
         Your rank
         <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-        <span class="statistic__rank-label">Sci-Fighter</span>
+        <span class="statistic__rank-label">${getProfileRating(filter[FilterType.WATCHLIST](movies).length)}</span>
       </p>
 
       <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -209,7 +211,7 @@ export default class Stats extends SmartView {
     }
 
     const filteredMovies = evt.target.value !== StatsFilters.ALL_TIME
-      ? this._movies.slice().filter((movie) => movie.watchDate >= dayjs().subtract(1, evt.target.value).toDate())
+      ? this._movies.slice().filter((movie) => dayjs(movie.watchDate) >= dayjs().subtract(1, evt.target.value).toDate())
       : this._movies;
 
     this.updateData({

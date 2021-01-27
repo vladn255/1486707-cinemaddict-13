@@ -192,30 +192,39 @@ export default class Movie {
       case UserAction.DELETE_COMMENT:
         this._setViewState(State.DELETING, update);
 
-        this._api.deleteComment(update.toString(10)).then(() => {
+        this._api.deleteComment(update.toString(10))
+        .then(() => {
           this._commentsModel.deleteComment(updateType, update.toString(10));
 
-          this._api.getComments(this._movie.id).then((commentsList) => {
-            this._commentsModel.setComments(UpdateType.INIT, commentsList);
-          })
+          this._api.getComments(this._movie.id)
+        .then((commentsList) => {
+          this._commentsModel.setComments(UpdateType.INIT, commentsList);
+        })
           .catch(() => {
             this._setViewState(State.ABORTING_DELETING);
           });
+        }).catch(() => {
+          this._setViewState(State.ABORTING_DELETING);
         });
         break;
 
       case UserAction.ADD_COMMENT:
         this._setViewState(State.SAVING);
 
-        this._api.addComment(this._movie, update).then((response) => {
+        this._api.addComment(this._movie, update)
+        .then((response) => {
           this._commentsModel.addComment(updateType, response.comments);
 
-          this._api.getComments(this._movie.id).then((commentsList) => {
+          this._api.getComments(this._movie.id)
+          .then((commentsList) => {
+
             this._commentsModel.setComments(UpdateType.INIT, commentsList);
           })
           .catch(() => {
             this._setViewState(State.ABORTING_SAVING);
           });
+        }).catch(() => {
+          this._setViewState(State.ABORTING_SAVING);
         });
         break;
     }
@@ -260,12 +269,14 @@ export default class Movie {
         break;
 
       case State.ABORTING_SAVING:
+        this._popupView.shake();
         this._popupView.updateData({
           isDisabled: false
         });
         break;
 
       case State.ABORTING_DELETING:
+        this._popupView.shake();
         this._commentsModel.switchDeletingStatus(UpdateType.INIT, updateId, false);
         this._comments = this._commentsModel.getComments();
         this._popupView.updateData({

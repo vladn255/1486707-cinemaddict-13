@@ -44,7 +44,6 @@ export default class Comments extends Observer {
 
   switchDeletingStatus(updateType, updateId, boolean) {
     const index = this._comments.findIndex((comment) => comment.id === updateId);
-
     this._comments[index].isDeleting = boolean;
 
     this._notify(updateType);

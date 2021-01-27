@@ -98,6 +98,20 @@ const State = {
   ABORTING_SAVING: `ABORTING_SAVING`
 };
 
+const RatesLevels = {
+  NOVICE: {
+    score: 10,
+    title: `novice`
+  },
+  FAN: {
+    score: 20,
+    title: `fan`
+  },
+  MOVIE_BUFF: {
+    score: 10,
+    title: `movie buff`
+  },
+};
 
 export {
   SortType,
@@ -110,5 +124,6 @@ export {
   KeyBindings,
   StatsFilters,
   NetworkValues,
-  State
+  State,
+  RatesLevels
 };

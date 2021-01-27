@@ -2,7 +2,7 @@ import {UpdateType, NetworkValues} from "./utils/const.js";
 import {RenderPosition, render} from "./utils/render.js";
 import Api from "./api.js";
 
-import UserRankView from "./view/user-rank.js";
+
 import FooterStatsView from "./view/footer-stats.js";
 
 import MoviesModel from "./model/movies.js";
@@ -24,11 +24,8 @@ const siteHeaderElement = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);
 const siteFooterElement = document.querySelector(`.footer`);
 
-// рендер header'a (меню навигации)
-render(siteHeaderElement, new UserRankView(), RenderPosition.BEFORE_END);
-
 // рендер меню навигации
-const filterPresenter = new FilterPresenter(siteMainElement, filterModel, moviesModel);
+const filterPresenter = new FilterPresenter(siteMainElement, filterModel, moviesModel, siteHeaderElement);
 filterPresenter.init();
 
 // рендер списков фильмов
