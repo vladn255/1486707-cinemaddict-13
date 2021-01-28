@@ -47,15 +47,10 @@ const createCommentItem = (comment) => {
 
 // создание списка комментариев
 const createCommentsList = (isLoading, comments) => {
-  if (isLoading) {
-    return (
-      `<li>Loading...</li>`
-    );
-  } else {
-    return (
-      `${comments.map(createCommentItem).join(``)}`
-    );
-  }
+  return isLoading
+    ? `<li>Loading...</li>`
+    : `${comments.map(createCommentItem).join(``)}`;
+
 };
 
 // создание шаблона информации о фильме

@@ -115,9 +115,6 @@ export default class Movie {
     this._popupView.reset(this._movie, this._comments);
     this._commentsModel.removeObserver(this._handleCommentsModelEvent);
 
-    document.removeEventListener(`keydown`, this._escPressClosePopupHandler);
-    document.removeEventListener(`keydown`, this._formSubmitHandler);
-
     remove(this._popupView);
   }
 

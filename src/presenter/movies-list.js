@@ -213,12 +213,12 @@ export default class MoviesList {
 
       case UpdateType.MINOR:
         this._clearMoviesContainer();
-        this._renderMainMoviesLists();
+        this._renderLoadedMovies();
         break;
 
       case UpdateType.MAJOR:
         this._clearMoviesContainer({resetRenderedMoviesCount: true, resetSortType: true});
-        this._renderMainMoviesLists();
+        this._renderLoadedMovies();
         break;
 
       case UpdateType.STATS:
@@ -230,7 +230,7 @@ export default class MoviesList {
       case UpdateType.INIT:
         this._isLoading = false;
         remove(this._loadingComponent);
-        this._renderMoviesLists();
+        this._renderLoadedMovies();
     }
   }
 

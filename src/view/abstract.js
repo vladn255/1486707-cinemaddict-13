@@ -28,7 +28,7 @@ export default class Abstract {
   }
 
   shake() {
-    this.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    this.getElement().querySelector(`form`).style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
     setTimeout(() => {
       this.getElement().style.animation = ``;
     }, SHAKE_ANIMATION_TIMEOUT);

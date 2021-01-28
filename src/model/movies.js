@@ -94,6 +94,12 @@ export default class Movies extends Observer {
         }
     );
 
+    adaptedMovie.comments = movie.comments.map((comment) => {
+      return comment.id
+        ? comment.id
+        : comment;
+    });
+
     delete adaptedMovie.cover;
     delete adaptedMovie.title;
     delete adaptedMovie.rate;
