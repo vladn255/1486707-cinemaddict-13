@@ -13,13 +13,15 @@ import StatsView from "../view/stats.js";
 import MoviePresenter from "./movie.js";
 
 export default class MoviesList {
-  constructor(container, moviesModel, filterModel, commentsModel) {
+  constructor(container, moviesModel, filterModel, commentsModel, api) {
     this._container = container;
     this._moviesModel = moviesModel;
     this._filterModel = filterModel;
     this._commentsModel = commentsModel;
+    this._api = api;
     this._renderedMoviesCount = MoviesListData.CARDS_MAIN_QUANTITY;
     this._currentSortButton = SortType.DEFAULT;
+    this._isLoading = true;
 
     this._moviesWrapperComponent = null;
     this._sortMenuComponent = null;
@@ -33,6 +35,8 @@ export default class MoviesList {
     this._allMoviesListComponent = null;
     this._topRatedListComponent = null;
     this._topCommentedListComponent = null;
+    this._emptyListComponent = null;
+    this._loadingComponent = null;
     this._moviePresenter = {};
     this._moviesList = [];
 
@@ -80,7 +84,7 @@ export default class MoviesList {
 
   // рендер карточки фильма
   _renderMovieCard(container, movie) {
-    const moviePresenter = new MoviePresenter(container, this._handleViewAction, this._commentsModel);
+    const moviePresenter = new MoviePresenter(container, this._handleViewAction, this._commentsModel, this._api);
     moviePresenter.init(movie);
     this._moviePresenter[movie.id] = moviePresenter;
   }
@@ -92,12 +96,17 @@ export default class MoviesList {
     this._moviePresenter = {};
   }
 
+  // рендер экрана загрузки
+  _renderLoadingList() {
+    this._loadingComponent = new MoviesListView(ListTypes.LOADING);
+    render(this._moviesElement, this._loadingComponent, RenderPosition.BEFORE_END);
+  }
+
   // рендер пустого списка - заглушки
   _renderEmptyList() {
-    const moviesListComponent = new MoviesListView(ListTypes.EMPTY_LIST);
-    this._moviesContainerList.push(moviesListComponent);
+    this._EmptyListComponent = new MoviesListView(ListTypes.EMPTY_LIST);
 
-    render(this._moviesElement, moviesListComponent, RenderPosition.BEFORE_END);
+    render(this._moviesElement, this._EmptyListComponent, RenderPosition.BEFORE_END);
   }
 
   // рендер основного списка фильмов "All Movies"
@@ -146,11 +155,20 @@ export default class MoviesList {
     this._renderMostCommented();
   }
 
-  // отрисовка списков фильмов
-  _renderMoviesLists() {
-    return !this._getMovies().length
+  // рендер загруженных фильмов
+  _renderLoadedMovies() {
+    return (this._getMovies().length === 0 || !this._getMovies())
       ? this._renderEmptyList()
       : this._renderMainMoviesLists();
+  }
+
+  // отрисовка списков фильмов
+  _renderMoviesLists() {
+    if (this._isLoading) {
+      this._renderLoadingList();
+      return;
+    }
+    this._renderLoadedMovies();
   }
 
   // очистка списка фильмов
@@ -167,22 +185,23 @@ export default class MoviesList {
     remove(this._topRatedListComponent);
     remove(this._topCommentedListComponent);
 
+    if (this._EmptyListComponent) {
+      remove(this._EmptyListComponent);
+    }
+
     this._allMoviesListComponent = null;
     this._topRatedListComponent = null;
     this._topCommentedListComponent = null;
+    this._EmptyListComponent = null;
   }
 
   // обработчик изменения представления
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_MOVIE:
-        this._moviesModel.updateMovie(updateType, update);
-        break;
-      case UserAction.DELETE_COMMENT:
-        this._commentsModel.deleteComment(updateType, update);
-        break;
-      case UserAction.ADD_COMMENT:
-        this._commentsModel.addComment(updateType, update);
+        this._api.updateMovie(update).then((response) => {
+          this._moviesModel.updateMovie(updateType, response);
+        });
         break;
     }
   }
@@ -200,20 +219,24 @@ export default class MoviesList {
 
       case UpdateType.MINOR:
         this._clearMoviesContainer();
-        this._renderMainMoviesLists();
+        this._renderLoadedMovies();
         break;
 
       case UpdateType.MAJOR:
         this._clearMoviesContainer({resetRenderedMoviesCount: true, resetSortType: true});
-        this._renderMainMoviesLists();
+        this._renderLoadedMovies();
         break;
 
       case UpdateType.STATS:
         this._clearMoviesContainer({resetSortType: true});
-
         this._statsComponent = new StatsView(this._moviesModel.getMovies());
         render(this._container, this._statsComponent, RenderPosition.BEFORE_END);
         break;
+
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderLoadedMovies();
     }
   }
 
@@ -287,6 +310,11 @@ export default class MoviesList {
     if (this._statsComponent) {
       remove(this._statsComponent);
       this._statsComponent = null;
+    }
+
+    if (this._loadingComponent) {
+      remove(this._loadingComponent);
+      this._loadingComponent = null;
     }
   }
 

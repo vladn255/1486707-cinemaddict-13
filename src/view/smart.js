@@ -17,7 +17,6 @@ export default class Smart extends AbstractView {
         this._data,
         update
     );
-
     if (justDataUpdating) {
       return;
     }
@@ -27,14 +26,15 @@ export default class Smart extends AbstractView {
 
   updateElement() {
     let prevElement = this.getElement();
-    prevElement.scrollTop = this.getElement().scrollTop;
+    const scrollPosition = prevElement.scrollTop;
 
     this.removeElement();
 
     const newElement = this.getElement();
-    newElement.scrollTop = prevElement.scrollTop;
 
     replace(newElement, prevElement);
+
+    newElement.scrollTop = scrollPosition;
 
     this.restoreHandlers();
   }

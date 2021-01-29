@@ -3,7 +3,7 @@ import {getShortText} from "../utils/common.js";
 import AbstractView from "./abstract.js";
 
 
-const createFilmArticle = (filmCard, comments) => {
+const createFilmArticle = (filmCard, commentsCount) => {
   let {cover, title, rate, releaseDate, duration, genres, description, isToWatch, isAlreadyWatched, isInFavorites} = filmCard;
 
   const controls = [
@@ -38,7 +38,7 @@ const createFilmArticle = (filmCard, comments) => {
         </p>
         <img src="${cover}" alt="${title}" class="film-card__poster">
         <p class="film-card__description">${shortDescription}</p>
-        <a class="film-card__comments">${comments.length} comments</a>
+        <a class="film-card__comments">${commentsCount} comments</a>
         <div class="film-card__controls">
            ${controls
             .map(({name, modifier, isActive}) => {
@@ -58,10 +58,10 @@ const createFilmArticle = (filmCard, comments) => {
 };
 
 export default class MovieCard extends AbstractView {
-  constructor(filmCard, comments) {
+  constructor(filmCard) {
     super();
     this._filmCard = filmCard;
-    this._comments = comments;
+    this._commentsCount = this._filmCard.comments.length;
     this._filmCardClickHandler = this._filmCardClickHandler.bind(this);
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
     this._historyClickHandler = this._historyClickHandler.bind(this);
@@ -69,7 +69,7 @@ export default class MovieCard extends AbstractView {
   }
 
   getTemplate() {
-    return createFilmArticle(this._filmCard, this._comments);
+    return createFilmArticle(this._filmCard, this._commentsCount);
   }
 
   _filmCardClickHandler(evt) {
