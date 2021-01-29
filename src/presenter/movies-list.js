@@ -35,7 +35,7 @@ export default class MoviesList {
     this._allMoviesListComponent = null;
     this._topRatedListComponent = null;
     this._topCommentedListComponent = null;
-    this._EmptyListComponent = null;
+    this._emptyListComponent = null;
     this._loadingComponent = null;
     this._moviePresenter = {};
     this._moviesList = [];
@@ -184,7 +184,10 @@ export default class MoviesList {
     remove(this._allMoviesListComponent);
     remove(this._topRatedListComponent);
     remove(this._topCommentedListComponent);
-    remove(this._EmptyListComponent);
+
+    if (this._EmptyListComponent) {
+      remove(this._EmptyListComponent);
+    }
 
     this._allMoviesListComponent = null;
     this._topRatedListComponent = null;
