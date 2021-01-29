@@ -1,7 +1,6 @@
 import {RenderPosition, render, replace, remove} from "../utils/render.js";
 import {UserAction, UpdateType, State} from "../utils/const.js";
 
-
 import MovieCardView from "../view/movie-card.js";
 import PopupView from "../view/popup.js";
 
@@ -166,7 +165,7 @@ export default class Movie {
   _handleDeleteClick(deletedCommentId) {
     this._handleCommentsViewAction(
         UserAction.DELETE_COMMENT,
-        UpdateType.PATCH,
+        UpdateType.INIT,
         deletedCommentId
     );
   }
@@ -176,7 +175,7 @@ export default class Movie {
     if (newComment.emoji && newComment.text) {
       this._handleCommentsViewAction(
           UserAction.ADD_COMMENT,
-          UpdateType.PATCH,
+          UpdateType.INIT,
           Object.assign({}, newComment)
       );
     }
@@ -192,33 +191,19 @@ export default class Movie {
         this._api.deleteComment(update.toString(10))
         .then(() => {
           this._commentsModel.deleteComment(updateType, update.toString(10));
-
-          this._api.getComments(this._movie.id)
-        .then((commentsList) => {
-          this._commentsModel.setComments(UpdateType.INIT, commentsList);
-        })
-          .catch(() => {
-            this._setViewState(State.ABORTING_DELETING);
-          });
         }).catch(() => {
-          this._setViewState(State.ABORTING_DELETING);
+          this._setViewState(State.ABORTING_DELETING, update);
         });
         break;
 
       case UserAction.ADD_COMMENT:
         this._setViewState(State.SAVING);
-
         this._api.addComment(this._movie, update)
-        .then((response) => {
-          this._commentsModel.addComment(updateType, response.comments);
-
+        .then(() => {
           this._api.getComments(this._movie.id)
           .then((commentsList) => {
-
-            this._commentsModel.setComments(UpdateType.INIT, commentsList);
-          })
-          .catch(() => {
-            this._setViewState(State.ABORTING_SAVING);
+            this._movie.comments = commentsList;
+            this._commentsModel.addComment(updateType, this._movie.comments);
           });
         }).catch(() => {
           this._setViewState(State.ABORTING_SAVING);
@@ -237,9 +222,10 @@ export default class Movie {
 
       case UpdateType.INIT:
         this._isLoading = false;
-        this._comments = this._commentsModel.getComments();
+        this._movie.comments = this._commentsModel.getComments();
+        this.init(this._movie);
         this._popupView.updateData({
-          comments: this._comments,
+          comments: this._movie.comments,
           isLoading: this._isLoading,
           isDisabled: false
         });
@@ -249,6 +235,19 @@ export default class Movie {
 
   // установка состояний deleting... и блокировки формы
   _setViewState(state, updateId) {
+    const abortSaving = () => {
+      this._popupView.updateData({
+        isDisabled: false
+      });
+    };
+
+    const abortDeleting = () => {
+      this._commentsModel.switchDeletingStatus(UpdateType.PATCH, updateId, false);
+      this._movie.comments = this._commentsModel.getComments();
+      this._popupView.updateData({
+        comments: this._movie.comments,
+      });
+    };
 
     switch (state) {
       case State.SAVING:
@@ -258,27 +257,19 @@ export default class Movie {
         break;
 
       case State.DELETING:
-        this._commentsModel.switchDeletingStatus(UpdateType.INIT, updateId, true);
-        this._comments = this._commentsModel.getComments();
+        this._commentsModel.switchDeletingStatus(UpdateType.PATCH, updateId, true);
+        this._movie.comments = this._commentsModel.getComments();
         this._popupView.updateData({
-          comments: this._comments,
+          comments: this._movie.comments,
         });
         break;
 
       case State.ABORTING_SAVING:
-        this._popupView.shake();
-        this._popupView.updateData({
-          isDisabled: false
-        });
+        this._popupView.shake(abortSaving);
         break;
 
       case State.ABORTING_DELETING:
-        this._popupView.shake();
-        this._commentsModel.switchDeletingStatus(UpdateType.INIT, updateId, false);
-        this._comments = this._commentsModel.getComments();
-        this._popupView.updateData({
-          comments: this._comments,
-        });
+        this._popupView.shake(abortDeleting);
         break;
     }
   }

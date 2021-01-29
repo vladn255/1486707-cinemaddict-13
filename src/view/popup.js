@@ -4,6 +4,7 @@ import SmartView from "./smart.js";
 
 import he from "he";
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
 
 // создание шаблона сведения о фильме
 const createFilmDetailItemTemplate = (detail, detailName) => {
@@ -211,12 +212,18 @@ export default class Popup extends SmartView {
   _clickClosePopupHandler(evt) {
     evt.preventDefault();
     this._callback.click();
+
+    document.removeEventListener(`keydown`, this._escPressClosePopupHandler);
+    document.removeEventListener(`keydown`, this._formSubmitHandler);
   }
 
   _escPressClosePopupHandler(evt) {
-    if (evt.key === KeyBindings.ESCAPE && document.body.contains(this.getElement())) {
+    if (evt.key === KeyBindings.ESCAPE) {
       evt.preventDefault();
       this._callback.escKeydown();
+
+      document.removeEventListener(`keydown`, this._escPressClosePopupHandler);
+      document.removeEventListener(`keydown`, this._formSubmitHandler);
     }
   }
 
@@ -319,7 +326,6 @@ export default class Popup extends SmartView {
 
   _emojiChangeHandler(evt) {
     evt.preventDefault();
-    this._scrollPosition = this.getElement().scrollTop;
 
     this.updateData({
       commentEmoji: evt.target.value,
@@ -357,6 +363,14 @@ export default class Popup extends SmartView {
     this.updateData(
         Popup.parseFilmToData(movie, comments)
     );
+  }
+
+  shake(callback) {
+    this.getElement().querySelector(`form`).style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      this.getElement().style.animation = ``;
+      callback();
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
 }
