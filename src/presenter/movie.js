@@ -178,6 +178,7 @@ export default class Movie {
           UpdateType.INIT,
           Object.assign({}, newComment)
       );
+
     }
   }
 
@@ -204,6 +205,10 @@ export default class Movie {
           .then((commentsList) => {
             this._movie.comments = commentsList;
             this._commentsModel.addComment(updateType, this._movie.comments);
+            this._popupView.updateData({
+              commentEmoji: null,
+              newComment: null
+            });
           });
         }).catch(() => {
           this._setViewState(State.ABORTING_SAVING);
