@@ -32,7 +32,8 @@ const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
   MAJOR: `MAJOR`,
-  STATS: `stats`
+  STATS: `STATS`,
+  INIT: `INIT`
 };
 
 const FilterType = {
@@ -63,6 +64,11 @@ const ListTypes = {
     title: `There are no movies in our database`,
     isHidden: false,
     isExtra: false
+  },
+  LOADING: {
+    title: `Loading...`,
+    isHidden: false,
+    isExtra: false
   }
 };
 
@@ -80,6 +86,32 @@ const StatsFilters = {
   YEAR: `year`
 };
 
+const NetworkValues = {
+  AUTHORIZATION: `Basic PEYMlSIwGLp6JKVJo`,
+  END_POINT: `https://13.ecmascript.pages.academy/cinemaddict`
+};
+
+const State = {
+  DELETING: `DELETING`,
+  SAVING: `SAVING`,
+  ABORTING_DELETING: `ABORTING_DELETING`,
+  ABORTING_SAVING: `ABORTING_SAVING`
+};
+
+const RatesLevels = {
+  NOVICE: {
+    score: 10,
+    title: `novice`
+  },
+  FAN: {
+    score: 20,
+    title: `fan`
+  },
+  MOVIE_BUFF: {
+    score: 10,
+    title: `movie buff`
+  },
+};
 
 export {
   SortType,
@@ -90,5 +122,8 @@ export {
   FilterType,
   ListTypes,
   KeyBindings,
-  StatsFilters
+  StatsFilters,
+  NetworkValues,
+  State,
+  RatesLevels
 };
