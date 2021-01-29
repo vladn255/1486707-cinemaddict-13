@@ -250,11 +250,6 @@ export default class Popup extends SmartView {
       if (newComment) {
         this._callback.formSubmit(newComment);
 
-        // this.updateData({
-        //   commentEmoji: null,
-        //   newComment: null,
-        // }, true);
-
       }
     }
   }
