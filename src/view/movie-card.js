@@ -4,7 +4,7 @@ import AbstractView from "./abstract.js";
 
 
 const createFilmArticle = (filmCard, commentsCount) => {
-  let {cover, title, rate, releaseDate, duration, genres, description, isToWatch, isAlreadyWatched, isInFavorites} = filmCard;
+  const {cover, title, rate, releaseDate, duration, genres, description, isToWatch, isAlreadyWatched, isInFavorites} = filmCard;
 
   const controls = [
     {
