@@ -2,12 +2,14 @@
   "name": "cinemaddict",
   "version": "1.0.0",
   "private": true,
+  "homepage": "https://vladn255.github.io/1486707-cinemaddict-13",
   "description": "Проект «Киноман» от HTML Academy",
   "scripts": {
     "eslint": "eslint src/**/*.js",
     "test": "npm run eslint",
     "build": "webpack --mode development",
-    "start": "webpack-dev-server --open"
+    "start": "webpack-dev-server --open",
+    "deploy": "gh-pages -d public"
   },
   "devDependencies": {
     "chart.js": "2.9.4",
@@ -15,6 +17,7 @@
     "dayjs": "1.9.5",
     "eslint": "7.13.0",
     "eslint-config-htmlacademy": "0.6.0",
+    "gh-pages": "^3.2.0",
     "he": "1.2.0",
     "webpack": "4.44.2",
     "webpack-cli": "3.3.12",
